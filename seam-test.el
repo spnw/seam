@@ -1,6 +1,6 @@
 ;;; seam-test.el --- Tests for Seam  -*- lexical-binding: t -*-
 
-;; Copyright (c) 2025 Spencer Williams
+;; Copyright (C) 2025 Spencer Williams
 
 ;; Author: Spencer Williams <spnw@plexwave.org>
 

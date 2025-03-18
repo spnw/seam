@@ -1,6 +1,6 @@
 ;;; seam.el --- Personal Org mode wiki  -*- lexical-binding: t; -*-
 
-;; Copyright (c) 2025 Spencer Williams
+;; Copyright (C) 2025 Spencer Williams
 
 ;; Author: Spencer Williams <spnw@plexwave.org>
 ;; Homepage: https://wiki.plexwave.org/seam
