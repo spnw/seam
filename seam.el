@@ -416,17 +416,20 @@ Otherwise, it's nil."
                   (concat "\\b" query "\\b")
                 query))))))
 
-(defun seam-visited-files ()
-  (cl-loop for buf in (buffer-list)
-           as file = (buffer-file-name buf)
-           when (and file (file-in-directory-p file seam-note-directory))
-           collect file))
+(defun seam-visited-notes ()
+  (let ((subdirs (seam-note-subdirectories)))
+    (cl-loop for buf in (buffer-list)
+             as file = (buffer-file-name buf)
+             when (and file
+                       (member (file-name-directory file) subdirs)
+                       (string-match seam-note-file-regexp file))
+             collect file)))
 
 (defun seam-replace-string-in-notes (old new preserve-modtime)
   (let ((hash (make-hash-table :test 'equal)))
     (dolist (file (seam-note-files-containing-string old))
       (puthash file nil hash))
-    (dolist (file (seam-visited-files))
+    (dolist (file (seam-visited-notes))
       (puthash file t hash))
     (let ((update-count 0))
       (maphash
