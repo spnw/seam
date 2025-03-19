@@ -356,7 +356,7 @@ from 1).  Otherwise a completion prompt is given for the desired type."
   (let ((old-slug (file-name-base old))
         (new-slug (file-name-base new)))
     (unless (string= old-slug new-slug)
-      (let ((count (seam-replace-string-in-notes
+      (let ((count (seam-replace-string-in-all-notes
                     (format "[[seam:%s]" old-slug)
                     (format "[[seam:%s]" new-slug)
                     t)))
@@ -425,7 +425,7 @@ Otherwise, it's nil."
                        (string-match seam-note-file-regexp file))
              collect file)))
 
-(defun seam-replace-string-in-notes (old new preserve-modtime)
+(defun seam-replace-string-in-all-notes (old new preserve-modtime)
   (let ((hash (make-hash-table :test 'equal)))
     (dolist (file (seam-note-files-containing-string old))
       (puthash file nil hash))
