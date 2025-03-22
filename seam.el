@@ -524,7 +524,7 @@ buffer is killed after deletion."
 creating the note if it does not exist.  If any text is selected, the
 link will replace it."
   (interactive)
-  (cl-destructuring-bind (completion . file) (seam-read-title "Insert link: ")
+  (cl-destructuring-bind (completion . file) (seam-read-title "Insert note link: ")
     (let* ((new-buffer
             (unless file
               (seam-make-note completion seam-default-note-type nil)))
