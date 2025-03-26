@@ -151,6 +151,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (with-current-buffer buffer
     (save-mark-and-excursion
       (save-restriction
+        (widen)
         (goto-char 1)
         (ignore-errors
           (re-search-forward (org-headline-re 1))

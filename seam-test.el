@@ -131,6 +131,18 @@
       (buffer-name note)
       (seam-get-title-from-buffer note)))))
 
+(ert-deftest seam-test-get-title-from-buffer-narrowed ()
+  (should
+   (equal
+    "foo"
+    (seam-test-with-notes ()
+        ((foo "foo"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo "* My headline")
+        (forward-line)
+        (org-narrow-to-subtree)
+        (seam-get-title-from-buffer))))))
+
 (ert-deftest seam-test-get-title-from-file ()
   (seam-test-with-notes () ((note "Note"))
     (should
