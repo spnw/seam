@@ -47,6 +47,7 @@
           (seam-title-formatter (lambda (title _type) title))
           (seam-export-template-file nil)
           (seam-export-template-string seam-export-default-template-string)
+          (seam-export-internal-link-class nil)
           (seam-export-alist
            `((,(file-name-concat seam-test-directory "html")
               :types ("public")
@@ -253,6 +254,20 @@ extension."
         (insert-file-contents "html/foo.html")
         (buffer-string)
         (re-search-forward "<a href=\"/bar\">"))))))
+
+(ert-deftest seam-test-link-internal-class ()
+  "Test that setting `seam-export-internal-link-class' correctly renders
+the class."
+  (should
+   (identity
+    (seam-test-with-notes ((seam-export-internal-link-class "internal"))
+        ((foo "foo" "public")
+         (bar "bar" "public"))
+      (seam-test-add-contents foo (seam-test-link-to-buffer bar))
+      (with-temp-buffer
+        (insert-file-contents "html/foo.html")
+        (buffer-string)
+        (re-search-forward "<a href=\"/bar.html\" class=\"internal\">"))))))
 
 (ert-deftest seam-test-link-getters ()
   (should

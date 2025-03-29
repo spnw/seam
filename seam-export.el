@@ -34,6 +34,7 @@
 (defvar seam-export--template nil)
 (defvar seam-export--root-path nil)
 (defvar seam-export--no-extension nil)
+(defvar seam-export--internal-link-class nil)
 (defvar seam-export--options nil)
 
 (defgroup seam-export nil
@@ -73,6 +74,11 @@ properties:
 
     Whether to drop the \".html\" file extension in links.  Defaults to
     nil.
+
+  `:internal-link-class'
+
+    CSS class name for internal links.  Defaults to the value of
+    `seam-export-internal-link-class'.
 
   `:backend-options'
 
@@ -164,6 +170,12 @@ the datetime attribute of <time>.  Passed to `format-time-string'."
 `format-time-string'."
   :group 'seam-export
   :type 'sexp)
+
+(defcustom seam-export-internal-link-class nil
+  "CSS class name to use for internal links (i.e., links to other Seam
+notes)."
+  :group 'seam-export
+  :type 'string)
 
 (defvar seam-export-backend-options
   (list
@@ -292,7 +304,10 @@ the datetime attribute of <time>.  Passed to `format-time-string'."
                          (seam-export--template template)
                          (seam-export--options (org-combine-plists
                                                 seam-export-backend-options
-                                                backend-options)))
+                                                backend-options))
+                         (seam-export--internal-link-class
+                          (or (plist-get plist :internal-link-class)
+                              seam-export-internal-link-class)))
                      (seam-export--note-to-html file dir))))))))
 
 (defun seam-export-all-notes ()

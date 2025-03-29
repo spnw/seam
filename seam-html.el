@@ -195,6 +195,9 @@ INFO is a plist holding contextual information.  See
 			                      link))))
 	           (and (eq link (org-element-map parent 'link #'identity info t))
 		              (org-export-read-attribute :attr_html parent)))
+           ;; Add Seam internal link class if appropriate.
+           (when (and seam-export--internal-link-class (string= "seam" link-type))
+             (list :class seam-export--internal-link-class))
 	         ;; Also add attributes from link itself.  Currently, those
 	         ;; need to be added programmatically before `org-html-link'
 	         ;; is invoked, for example, by backends building upon HTML
