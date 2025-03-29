@@ -50,7 +50,7 @@ properties:
 
   `:types'
 
-   List of note types to export to this directory.  Required.
+    List of note types to export to this directory.  Required.
 
   `:template-file'
 
@@ -60,25 +60,25 @@ properties:
 
   `:template-string'
 
-   The HTML template string to be used by the exporter.  If this is
-   missing, falls back to :template-file, `seam-export-template-file',
-   or `seam-export-template-string' in that order.
+    The HTML template string to be used by the exporter.  If this is
+    missing, falls back to :template-file, `seam-export-template-file',
+    or `seam-export-template-string' in that order.
 
   `:root-path'
 
-   The root path used for rendering internal links.  Defaults to \"\",
-   which means all paths are relative.
+    The root path used for rendering internal links.  Defaults to \"\",
+    which means all paths are relative.
 
   `:no-extension'
 
-   Whether to drop the \".html\" file extension in links.  Defaults to
-   nil.
+    Whether to drop the \".html\" file extension in links.  Defaults to
+    nil.
 
   `:backend-options'
 
-   A plist of extra options passed to the Org HTML backend.  This can be
-   used to override any of the defaults set in
-   `seam-export-backend-options'."
+    A plist of extra options passed to the Org HTML backend.  This can be
+    used to override any of the defaults set in
+    `seam-export-backend-options'."
   :group 'seam-export
   :type '(alist :key-type string :value-type plist))
 
@@ -117,17 +117,27 @@ See `seam-export-alist' for more information about specifying templates."
 It should be plain HTML5. Several variables are defined which can be
 interpolated using the {{variable}} syntax:
 
-- contents: The full HTML contents of the note, sans the title header.
+  `contents'
 
-- title: The note's title (HTML-escaped).
+   The full HTML contents of the note, sans the title header.
 
-- backlinks: A list (<ul>) of notes that link to the given note.
+  `title'
 
-- modified: The human-readable date that the note was last modified.
-  See `seam-export-time-format'.
+   The note's title (HTML-escaped).
 
-- modified-dt: The machine-readable date that the note was last
-  modified. See `seam-export-time-format-datetime'.")
+  `backlinks'
+
+   A list (<ul>) of notes that link to the given note.
+
+  `modified'
+
+   The human-readable date that the note was last modified.  See
+   `seam-export-time-format'.
+
+  `modified-dt'
+
+   The machine-readable date that the note was last modified. See
+   `seam-export-time-format-datetime'.")
 
 (defcustom seam-export-template-string seam-export-default-template-string
   "The HTML template string to be used by the exporter.  The template
