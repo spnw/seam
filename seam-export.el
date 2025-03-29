@@ -282,11 +282,8 @@ notes)."
     (cl-loop for (dir . plist) in seam-export-alist
              do
              (let ((types (plist-get plist :types))
-                   (root-path (plist-get plist :root-path))
-                   (no-extension (plist-get plist :no-extension))
                    (template-file (plist-get plist :template-file))
-                   (template-string (plist-get plist :template-string))
-                   (backend-options (plist-get plist :backend-options)))
+                   (template-string (plist-get plist :template-string)))
                (unless types
                  (error "You must specify :types for export"))
                (let ((template
@@ -299,15 +296,15 @@ notes)."
                        (t (error "You must specify a template for export (see `seam-export-alist')")))))
                  (when (member type types)
                    (let ((seam-export--types types)
-                         (seam-export--root-path (or root-path ""))
-                         (seam-export--no-extension no-extension)
+                         (seam-export--root-path (or (plist-get plist :root-path) ""))
+                         (seam-export--no-extension (plist-get plist :no-extension))
                          (seam-export--template template)
-                         (seam-export--options (org-combine-plists
-                                                seam-export-backend-options
-                                                backend-options))
                          (seam-export--internal-link-class
                           (or (plist-get plist :internal-link-class)
-                              seam-export-internal-link-class)))
+                              seam-export-internal-link-class))
+                         (seam-export--options (org-combine-plists
+                                                seam-export-backend-options
+                                                (plist-get plist :backend-options))))
                      (seam-export--note-to-html file dir))))))))
 
 (defun seam-export-all-notes ()
