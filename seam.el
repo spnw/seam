@@ -70,6 +70,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam-html-directories ()
   (mapcar #'car seam-export-alist))
 
+(defun seam-slugify (title)
+  (downcase (string-join (string-split title "\\W+" t) "-")))
+
 (defun seam-lookup-slug (slug)
   (cl-dolist (type seam-note-types)
     (let ((file (file-name-concat seam-note-directory type (concat slug ".org"))))
@@ -183,9 +186,6 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam--completing-read (&rest args)
   (let ((completion-ignore-case t))
     (apply seam-completing-read-function args)))
-
-(defun seam-slugify (title)
-  (downcase (string-join (string-split title "\\W+" t) "-")))
 
 (defun seam-make-note (title &optional type select)
   (unless type
@@ -313,9 +313,9 @@ completion prompt is given to choose the type."
   (let* ((old (buffer-file-name))
          (type (seam-get-note-type old t)))
     (when type
-      (let* ((title (or (seam-get-title-from-buffer)
-                        (error "Note must have a title")))
-             (slug (seam-get-slug-from-buffer))
+      (unless (seam-get-title-from-buffer)
+        (error "Note must have a title"))
+      (let* ((slug (seam-get-slug-from-buffer))
              (new (seam-make-file-name slug type)))
         (unless (string= old new)       ;This is valid because
                                         ;`seam-save-buffer' cannot
