@@ -76,9 +76,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
       (when (file-exists-p file)
         (cl-return (expand-file-name file))))))
 
-(defun seam--check-conflict (title)
-  (when (seam-lookup-slug (seam-slugify title))
-    (error "`%s' would conflict with an existing note" title)))
+(defun seam--check-conflict (slug)
+  (when (seam-lookup-slug slug)
+    (error "A note called `%s.org' already exists" slug)))
 
 (defun seam-link-open (path _prefix)
   (org-mark-ring-push)
@@ -166,6 +166,17 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
     (insert-file-contents file)
     (seam-get-title-from-buffer)))
 
+(cl-defun seam-get-slug-from-buffer (&optional (buffer (current-buffer)))
+  (or (with-current-buffer buffer
+        (save-mark-and-excursion
+          (save-restriction
+            (widen)
+            (goto-char 1)
+            (ignore-errors
+              (re-search-forward (org-headline-re 1))
+              (org-element-property :SEAM_SLUG (org-element-at-point))))))
+      (seam-slugify (seam-get-title-from-buffer buffer))))
+
 (defun seam-format-title (title type)
   (funcall seam-title-formatter title type))
 
@@ -182,10 +193,11 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (unless (member type seam-note-types)
     (error "`%s' is not a valid Seam note type" type))
   (seam-ensure-note-subdirectories-exist)
-  (let ((file (file-name-concat seam-note-directory
-                                type
-                                (concat (seam-slugify title) ".org"))))
-    (seam--check-conflict title)
+  (let* ((slug (seam-slugify title))
+         (file (file-name-concat seam-note-directory
+                                 type
+                                 (concat slug ".org"))))
+    (seam--check-conflict slug)
     (let ((buffer (funcall (if select #'find-file #'find-file-noselect) file)))
       (with-current-buffer buffer
         (insert (format "* %s\n" title))
@@ -303,12 +315,12 @@ completion prompt is given to choose the type."
     (when type
       (let* ((title (or (seam-get-title-from-buffer)
                         (error "Note must have a title")))
-             (slug (seam-slugify title))
+             (slug (seam-get-slug-from-buffer))
              (new (seam-make-file-name slug type)))
         (unless (string= old new)       ;This is valid because
                                         ;`seam-save-buffer' cannot
                                         ;change type.
-          (seam--check-conflict title)
+          (seam--check-conflict slug)
           (rename-file old new)
           (set-visited-file-name new nil t))
         (let ((previous-links-from-file

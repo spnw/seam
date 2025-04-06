@@ -424,6 +424,16 @@ update linking HTML files such that they link to it."
         ((note "\"quotes\" & <symbols>" "public"))
       (seam-export--file-string "html/quotes-symbols.html")))))
 
+(ert-deftest seam-test-custom-slug ()
+  "Test that setting the SEAM_SLUG property saves and exports accordingly."
+  (should
+   (equal
+    '("html/c-vs-cpp.html" "public/c-vs-cpp.org")
+    (seam-test-with-notes ()
+        ((note "C vs C++" "public"))
+      (seam-test-add-contents note ":PROPERTIES:\n:SEAM_SLUG: c-vs-cpp\n:END:")
+      (seam-test-list-files)))))
+
 (provide 'seam-test)
 
 ;;; seam-test.el ends here
