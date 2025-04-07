@@ -16,8 +16,9 @@ Three of Seam's key design tenets are:
 - Notes should not be unnecessarily clouded with metadata.
 
 Be aware that Seam is a fully self-contained package, and is not
-likely to be compatible with things like Org-roam due to its vastly
-different approach.
+likely to be compatible with things like
+[Org-roam](https://www.orgroam.com/) due to its vastly different
+approach.
 
 ### Getting started
 
