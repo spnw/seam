@@ -545,10 +545,11 @@ buffer is killed after deletion."
      (list
       (let ((incoming (length (seam-get-links-to-file file))))
         (and (yes-or-no-p
-              (format "Really %s file and kill buffer%s?"
+              (format "Really %s `%s' and kill buffer%s?"
                       (if delete-by-moving-to-trash
                           "trash"
                         "delete")
+                      (seam-get-title-from-buffer)
                       (if (> incoming 0)
                           (format " (breaking links from %d note%s)"
                                   incoming
