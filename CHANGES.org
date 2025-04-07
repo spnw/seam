@@ -1,6 +1,10 @@
 ** Changes since 0.1.0
 
 *** Breaking changes
+- Code has been moved to =lisp/= subdirectory, where it should have
+  been all along.  Make sure to add =seam/lisp= to your =load-path=
+  instead of just =seam=.
+
 **** Renamed functions
 - =seam-replace-string-in-notes= is now =seam-replace-string-in-all-notes=.
 - =seam-visited-files= is now =seam-visited-notes=.
