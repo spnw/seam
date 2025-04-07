@@ -1,0 +1,31 @@
+** A personal wiki toolkit for Emacs
+
+[[https://wiki.plexwave.org/seam][Seam]] leverages the power of [[https://orgmode.org/][Org mode]] to make creating, linking, and
+exporting your notes easier.  It is geared particularly towards
+creating a personal wiki — a place where you can share some portion of
+your notes with the world.  It takes inspiration from the likes of
+[[https://obsidian.md/][Obsidian]] and [[https://www.mediawiki.org/wiki/MediaWiki][MediaWiki]].
+
+Three of Seam's key design tenets are:
+
+- Org files and their resultant HTML files should always be kept in
+  sync.
+- It should be easy to create multiple sites using different subsets
+  of the same note collection.
+- Notes should not be unnecessarily clouded with metadata.
+
+Be aware that Seam is a fully self-contained package, and is not
+likely to be compatible with things like [[https://www.orgroam.com/][Org-roam]] due to its vastly
+different approach.
+
+*** Getting started
+
+The easiest way to begin is to follow the brief [[https://wiki.plexwave.org/seam-tutorial][tutorial]].
+
+*** Documentation
+
+Seam's manual is still being written.  In the meantime, the [[https://wiki.plexwave.org/seam][project
+page]] contains some more tidbits you might find useful.
+
+I have endeavored to make Seam fairly self-documenting, so check the
+docstrings and the Seam customization group when in any doubt.
