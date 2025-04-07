@@ -9,6 +9,8 @@
 *** Improvements
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
+- Title is now mentioned when deleting a note, to make it less likely
+  you delete the wrong one by mistake.
 
 *** Bugfixes
 - =seam-visited-notes= no longer returns buffers visiting non-note
