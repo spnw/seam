@@ -222,7 +222,7 @@ notes)."
 (defun seam-export--replace-variable (var replacement)
   (goto-char 1)
   (while (re-search-forward (format "{{%s}}" var) nil t)
-    (replace-match replacement)))
+    (replace-match replacement t t)))
 
 (defun seam-export--generate-backlinks (file)
   (seam-export--to-string

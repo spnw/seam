@@ -14,6 +14,8 @@
 - =seam-visited-notes= no longer returns buffers visiting non-note
   files within the Seam directory.
 - Buffer titles are now set correctly from narrowed buffers.
+- An issue with regexp escape sequences being interpreted in template
+  variable replacements has been fixed.
 
 ** Renamed functions
 - =seam-replace-string-in-all-notes= (was =seam-replace-string-in-notes=)
