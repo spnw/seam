@@ -267,18 +267,27 @@ completion prompt is given to choose the type."
   (remove (expand-file-name file)
           (seam-note-files-containing-string (format "[[seam:%s]" (file-name-base file)))))
 
+(cl-defun seam-get-links-from-buffer (&optional (buffer (current-buffer)))
+  "Return filename of each existing note which is linked to from BUFFER."
+  (let ((links (with-current-buffer buffer
+                 (save-mark-and-excursion
+                   (save-restriction
+                     (widen)
+                     (goto-char 1)
+                     (delete-dups
+                      (cl-loop for ret = (re-search-forward "\\[\\[seam:\\(.*?\\)\\]" nil t)
+                               while ret collect (match-string 1))))))))
+    (let ((file (buffer-file-name buffer)))
+      (remove (and file (expand-file-name file))
+              (cl-loop for link in links
+                       as f = (seam-lookup-slug link)
+                       when f collect f)))))
+
 (defun seam-get-links-from-file (file)
   "Return filename of each existing note which is linked to from FILE."
-  (let ((links
-         (with-temp-buffer
-           (insert-file-contents file)
-           (delete-dups
-            (cl-loop for ret = (re-search-forward "\\[\\[seam:\\(.*?\\)\\]" nil t)
-                     while ret collect (match-string 1))))))
-    (remove (expand-file-name file)
-            (cl-loop for link in links
-                     as f = (seam-lookup-slug link)
-                     when f collect f))))
+  (with-temp-buffer
+    (insert-file-contents file)
+    (seam-get-links-from-buffer)))
 
 (defun seam-delete-html-files-for-note (note-file)
   (dolist (dir (seam-html-directories))
@@ -287,27 +296,40 @@ completion prompt is given to choose the type."
         (delete-file html)
         (message "Deleted %s" html)))))
 
-(defun seam-post-save-or-rename (old new &optional previous-links-from-file)
+(defun seam-post-save-or-rename (old new &optional previous-links-from-file slug-or-title-changed)
   (unless (string= old new)
     (seam-update-links old new)
     (seam-delete-html-files-for-note old)
     (dolist (dir (seam-html-directories))
       (delete-file (file-name-concat dir (concat (file-name-base old) ".html")))))
   (seam-export-note new)
-  (let ((removed-links (cl-set-difference previous-links-from-file
-                                          (seam-get-links-from-file new)
-                                          :test #'string=)))
-    (mapc #'seam-export-note
-          (delete-dups
-           (append removed-links
-                   (seam-get-links-from-file new)
-                   ;; If our type changes, we cannot rely on
-                   ;; `seam-update-links' to trigger a re-render of
-                   ;; the pages that link to us, as types are not
-                   ;; encoded in the link.
-                   (unless (string= (seam-get-note-type old)
-                                    (seam-get-note-type new))
-                     (seam-get-links-to-file new)))))))
+  (let* ((current-links (seam-get-links-from-file new))
+         (added-links (cl-set-difference current-links
+                                         previous-links-from-file
+                                         :test #'string=))
+         (removed-links (cl-set-difference previous-links-from-file
+                                           current-links
+                                           :test #'string=)))
+    (let ((type-changed
+           (not (string= (seam-get-note-type old)
+                         (seam-get-note-type new)))))
+      (mapc #'seam-export-note
+            (delete-dups
+             (append
+              removed-links
+
+              ;; Backlinks sections must be updated when either
+              ;; slug or title changes.
+              (if slug-or-title-changed
+                  current-links
+                added-links)
+
+              ;; `seam-update-links' inherently triggers
+              ;; re-exporting of notes when links change.
+              ;; However, note type is not encoded in the link,
+              ;; so we must handle that case manually.
+              (when type-changed
+                (seam-get-links-to-file new))))))))
 
 (defun seam-save-buffer ()
   (let* ((old (buffer-file-name))
@@ -316,7 +338,12 @@ completion prompt is given to choose the type."
       (unless (seam-get-title-from-buffer)
         (error "Note must have a title"))
       (let* ((slug (seam-get-slug-from-buffer))
-             (new (seam-make-file-name slug type)))
+             (new (seam-make-file-name slug type))
+             (newly-created-p (not (file-exists-p old)))
+             (slug-changed-p (not (string= slug (file-name-base old))))
+             (title-changed-p (unless newly-created-p
+                                (not (string= (seam-get-title-from-buffer)
+                                              (seam-get-title-from-file old))))))
         (unless (string= old new)       ;This is valid because
                                         ;`seam-save-buffer' cannot
                                         ;change type.
@@ -325,12 +352,15 @@ completion prompt is given to choose the type."
           (set-visited-file-name new nil t))
         (let ((previous-links-from-file
                ;; If we've yet to create the file, don't check it.
-               (when (file-exists-p new)
+               (unless newly-created-p
                  (seam-get-links-from-file new))))
           (let ((write-contents-functions
                  (remove 'seam-save-buffer write-contents-functions)))
             (save-buffer))
-          (seam-post-save-or-rename old new previous-links-from-file)
+          (seam-post-save-or-rename old
+                                    new
+                                    previous-links-from-file
+                                    (or slug-changed-p title-changed-p))
           (seam-set-buffer-name)
           t)))))
 

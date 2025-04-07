@@ -225,6 +225,20 @@
                (mapcar #'seam-test-remove-testdir (seam-get-links-from-file (buffer-file-name foo)))
                (seam-test-list-files)))))))
 
+(ert-deftest seam-test-link-update-no-unnecessary-export ()
+  "Test that updating the contents of a note does not unnecessarily
+re-export note to which it links."
+  (should-not
+   (member
+    "html/bar.html"
+    (seam-test-with-notes ()
+        ((foo "foo" "public")
+         (bar "bar" "public"))
+      (seam-test-add-contents foo (seam-test-link-to-buffer bar))
+      (delete-file "html/bar.html")
+      (seam-test-add-contents foo "hello")
+      (seam-test-list-files)))))
+
 (ert-deftest seam-test-link-to-private ()
   "Test that a private link does not get exported in HTML."
   (should-error

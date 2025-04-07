@@ -6,6 +6,10 @@
 - =SEAM_SLUG= property can be added to title headline to set a custom
   slug.
 
+** Improvements
+- Notes are no longer re-exported unnecessarily whenever a linked note
+  is changed.
+
 ** Bugfixes
 - =seam-visited-notes= no longer returns buffers visiting non-note
   files within the Seam directory.
