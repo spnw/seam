@@ -1,22 +1,22 @@
-* Changes since 0.1.0
+** Changes since 0.1.0
 
-** New features
+*** New features
 - Option to export internal links with a custom CSS class
   (=seam-export-internal-link-class= / =:internal-link-class=).
 - =SEAM_SLUG= property can be added to title headline to set a custom
   slug.
 
-** Improvements
+*** Improvements
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
 
-** Bugfixes
+*** Bugfixes
 - =seam-visited-notes= no longer returns buffers visiting non-note
   files within the Seam directory.
 - Buffer titles are now set correctly from narrowed buffers.
 - An issue with regexp escape sequences being interpreted in template
   variable replacements has been fixed.
 
-** Renamed functions
+*** Renamed functions
 - =seam-replace-string-in-all-notes= (was =seam-replace-string-in-notes=)
 - =seam-visited-notes= (was =seam-visited-files=)
