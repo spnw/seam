@@ -1,10 +1,11 @@
 ## A personal wiki toolkit for Emacs
 
-Seam leverages the power of [Org mode](https://orgmode.org/) to make
-creating, linking, and exporting your notes easier.  It is geared
-particularly towards creating a personal wiki — a place where you can
-share some portion of your notes with the world.  It takes inspiration
-from the likes of [Obsidian](https://obsidian.md/) and
+[Seam](https://wiki.plexwave.org/seam) leverages the power of [Org
+mode](https://orgmode.org/) to make creating, linking, and exporting
+your notes easier.  It is geared particularly towards creating a
+personal wiki — a place where you can share some portion of your notes
+with the world.  It takes inspiration from the likes of
+[Obsidian](https://obsidian.md/) and
 [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki).
 
 Three of Seam's key design tenets are:
