@@ -1,5 +1,10 @@
 ** Changes since 0.1.0
 
+*** Breaking changes
+**** Renamed functions
+- =seam-replace-string-in-notes= is now =seam-replace-string-in-all-notes=.
+- =seam-visited-files= is now =seam-visited-notes=.
+
 *** New features
 - Option to export internal links with a custom CSS class
   (=seam-export-internal-link-class= / =:internal-link-class=).
@@ -18,7 +23,3 @@
 - Buffer titles are now set correctly from narrowed buffers.
 - An issue with regexp escape sequences being interpreted in template
   variable replacements has been fixed.
-
-*** Renamed functions
-- =seam-replace-string-in-all-notes= (was =seam-replace-string-in-notes=)
-- =seam-visited-notes= (was =seam-visited-files=)
