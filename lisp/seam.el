@@ -221,7 +221,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam--read-type (prompt arg &optional choices)
   (when arg
     (if (listp arg)
-        (funcall seam-completing-read-function prompt (or choices seam-note-types) nil t)
+        (let ((type (funcall seam-completing-read-function prompt (or choices seam-note-types) nil t)))
+          (seam-validate-note-type type)
+          type)
       (nth (1- arg) seam-note-types))))
 
 ;;;###autoload
