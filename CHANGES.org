@@ -9,12 +9,14 @@
 **** Renamed functions
 
 - =seam-replace-string-in-notes= is now =seam-replace-string-in-all-notes=.
+
 - =seam-visited-files= is now =seam-visited-notes=.
 
 *** New features
 
 - Option to export internal links with a custom CSS class
   (=seam-export-internal-link-class= / =:internal-link-class=).
+
 - =SEAM_SLUG= property can be added to title headline to set a custom
   slug.
 
@@ -22,6 +24,7 @@
 
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
+
 - Title is now mentioned when deleting a note, to make it less likely
   you delete the wrong one by mistake.
 
@@ -29,9 +32,12 @@
 
 - =seam-visited-notes= no longer returns buffers visiting non-note
   files within the Seam directory.
+
 - Buffer titles are now set correctly from narrowed buffers.
+
 - An issue with regexp escape sequences being interpreted in template
   variable replacements has been fixed.
+
 - Seam now validates note types entered with =C-u seam-set-note-type=,
   averting any mishaps if your completing-read function returns an
   invalid type.
