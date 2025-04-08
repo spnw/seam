@@ -196,6 +196,8 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
          (file (file-name-concat seam-note-directory
                                  type
                                  (concat slug ".org"))))
+    (when (string= "" slug)
+      (error "Cannot create a note with an empty slug"))
     (seam--check-conflict slug)
     (let ((buffer (funcall (if select #'find-file #'find-file-noselect) file)))
       (with-current-buffer buffer

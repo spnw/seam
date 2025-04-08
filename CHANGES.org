@@ -41,3 +41,5 @@
 - Seam now validates note types entered with =C-u seam-set-note-type=,
   averting any mishaps if your completing-read function returns an
   invalid type.
+
+- It is no longer possible to create a note with an empty slug.
