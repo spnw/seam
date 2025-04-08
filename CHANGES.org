@@ -28,6 +28,9 @@
 - Title is now mentioned when deleting a note, to make it less likely
   you delete the wrong one by mistake.
 
+- Completion support is somewhat improved.  =ido-completing-read= now
+  works properly, and Seam no longer binds =completion-ignore-case=.
+
 *** Bugfixes
 
 - =seam-visited-notes= no longer returns buffers visiting non-note
