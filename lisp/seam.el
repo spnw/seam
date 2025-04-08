@@ -183,11 +183,14 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam-format-title (title type)
   (funcall seam-title-formatter title type))
 
+(defun seam-validate-note-type (type)
+  (unless (member type seam-note-types)
+    (error "`%s' is not a valid Seam note type" type)))
+
 (defun seam-make-note (title &optional type select)
   (unless type
     (setq type seam-default-note-type))
-  (unless (member type seam-note-types)
-    (error "`%s' is not a valid Seam note type" type))
+  (seam-validate-note-type type)
   (seam-ensure-note-subdirectories-exist)
   (let* ((slug (seam-slugify title))
          (file (file-name-concat seam-note-directory
