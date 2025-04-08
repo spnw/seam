@@ -183,10 +183,6 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam-format-title (title type)
   (funcall seam-title-formatter title type))
 
-(defun seam--completing-read (&rest args)
-  (let ((completion-ignore-case t))
-    (apply seam-completing-read-function args)))
-
 (defun seam-make-note (title &optional type select)
   (unless type
     (setq type seam-default-note-type))
@@ -215,14 +211,14 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
                    (and self (list self)))))
       (let ((files (cl-loop for (title . file) in notes
                             collect (cons (seam-format-title title (seam-get-note-type file)) file))))
-        (let ((completion (string-trim (seam--completing-read prompt files))))
+        (let ((completion (string-trim (funcall seam-completing-read-function prompt files))))
           (or (assoc completion files)
               (cons completion nil)))))))
 
 (defun seam--read-type (prompt arg &optional choices)
   (when arg
     (if (listp arg)
-        (seam--completing-read prompt (or choices seam-note-types) nil t)
+        (funcall seam-completing-read-function prompt (or choices seam-note-types) nil t)
       (nth (1- arg) seam-note-types))))
 
 ;;;###autoload
