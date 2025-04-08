@@ -29,3 +29,11 @@ page]] contains some more tidbits you might find useful.
 
 I have endeavored to make Seam fairly self-documenting, so check the
 docstrings and the Seam customization group when in any doubt.
+
+*** Known issues
+
+- =find-file= does not create notes properly.  You should use
+  =seam-find-note= instead.
+- Commented-out links are not ignored, e.g. for determining backlinks.
+- Tags in note title headlines are not ignored; they are treated as
+  part of the title.
