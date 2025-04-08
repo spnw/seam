@@ -2,39 +2,41 @@
 
 *** Breaking changes
 
-- Code has been moved to =lisp/= subdirectory, where it should have
-  been all along.  Make sure to add =seam/lisp= to your =load-path=
-  instead of just =seam=.
+- Seam's code has been moved to the =lisp/= subdirectory, where it
+  should have been all along.  Make sure to update your =init.el=
+  accordingly.
 
 **** Renamed functions
 
-- =seam-replace-string-in-notes= is now =seam-replace-string-in-all-notes=.
+- =seam-replace-string-in-notes= is now
+  =seam-replace-string-in-all-notes=.
 
 - =seam-visited-files= is now =seam-visited-notes=.
 
 *** New features
 
-- Option to export internal links with a custom CSS class
-  (=seam-export-internal-link-class= / =:internal-link-class=).
+- An option has been added to export internal links with a custom CSS
+  class.  The default is set by =seam-export-internal-link-class=, and
+  can overridden per-export using =:internal-link-class=.
 
-- =SEAM_SLUG= property can be added to title headline to set a custom
-  slug.
+- Custom slugs can now be set by adding the =SEAM_SLUG= property to a
+  note's title headline.
 
 *** Improvements
 
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
 
-- Title is now mentioned when deleting a note, to make it less likely
-  you delete the wrong one by mistake.
+- When invoking =seam-delete-note=, the note's title is now mentioned.
+  This is to reduce the risk of deleting the wrong note by mistake.
 
 - Completion support is somewhat improved.  =ido-completing-read= now
   works properly, and Seam no longer binds =completion-ignore-case=.
 
 *** Bugfixes
 
-- =seam-visited-notes= no longer returns buffers visiting non-note
-  files within the Seam directory.
+- =seam-visited-notes= no longer returns buffers that visit non-note
+  files within =seam-note-directory=.
 
 - Buffer titles are now set correctly from narrowed buffers.
 
@@ -42,7 +44,6 @@
   variable replacements has been fixed.
 
 - Seam now validates note types entered with =C-u seam-set-note-type=,
-  averting any mishaps if your completing-read function returns an
-  invalid type.
+  averting any mishaps if an invalid type is entered.
 
 - It is no longer possible to create a note with an empty slug.
