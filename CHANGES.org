@@ -32,3 +32,6 @@
 - Buffer titles are now set correctly from narrowed buffers.
 - An issue with regexp escape sequences being interpreted in template
   variable replacements has been fixed.
+- Seam now validates note types entered with =C-u seam-set-note-type=,
+  averting any mishaps if your completing-read function returns an
+  invalid type.

@@ -358,6 +358,20 @@ backlink."
        (insert-file-contents "html/bar.html")
        (re-search-forward "<a href=\"/foo.html\">")))))
 
+(ert-deftest seam-test-backlinks-comment ()
+  "Test that a commented-out link does not add a backlink."
+  :expected-result :failed
+  (should-error
+   (identity
+    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+        ((foo "foo" "public")
+         (bar "bar" "public"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo (concat "# " (seam-test-link-to-buffer bar))))
+      (with-temp-buffer
+        (insert-file-contents "html/bar.html")
+        (re-search-forward "<a href=\"/foo.html\">"))))))
+
 (ert-deftest seam-test-set-type-private ()
   "Test that setting a public note to private will delete its HTML file and
 update linking HTML files such that they no longer link to it."
