@@ -10,8 +10,10 @@ Three of Seam's key design tenets are:
 
 - Org files and their resultant HTML files should always be kept in
   sync.
+
 - It should be easy to create multiple sites using different subsets
   of the same note collection.
+
 - Notes should not be unnecessarily clouded with metadata.
 
 Be aware that Seam is a fully self-contained package, and is not
@@ -34,6 +36,8 @@ docstrings and the Seam customization group when in any doubt.
 
 - =find-file= does not create notes properly.  You should use
   =seam-find-note= instead.
+
 - Commented-out links are not ignored, e.g. for determining backlinks.
+
 - Tags in note title headlines are not ignored; they are treated as
   part of the title.
