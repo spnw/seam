@@ -216,7 +216,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
                    (and self (list self)))))
       (let ((files (cl-loop for (title . file) in notes
                             collect (cons (seam-format-title title (seam-get-note-type file)) file))))
-        (let ((completion (string-trim (funcall seam-completing-read-function prompt files))))
+        (let ((completion (string-trim (funcall seam-completing-read-function prompt (mapcar #'car files)))))
           (or (assoc completion files)
               (cons completion nil)))))))
 
