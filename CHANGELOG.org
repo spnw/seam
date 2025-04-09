@@ -36,7 +36,8 @@
 *** Bugfixes
 
 - =seam-visited-notes= no longer returns buffers that visit non-note
-  files within =seam-note-directory=.
+  files within =seam-note-directory=.  This could have resulted in
+  Seam inappropriately modifying those files (e.g. updating links).
 
 - Buffer titles are now set correctly from narrowed buffers.
 
