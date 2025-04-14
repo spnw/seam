@@ -226,12 +226,12 @@ notes)."
 
 (defun seam-export--generate-backlinks (file)
   (seam-export--to-string
-    (let ((files (sort
+    (let ((files (cl-sort
                   (let ((seam--subset seam-export--types))
                     (cl-loop for x in (seam-get-links-to-file file)
                              collect (cons (seam-get-title-from-file x) x)))
-                  :key #'car
-                  :lessp #'string<)))
+                  #'string<
+                  :key #'car)))
       (when files
         (cl-loop for (title . file) in files
                  do (insert (format "- [[seam:%s][%s]]\n" (file-name-base file) title)))))))
