@@ -505,10 +505,11 @@ Otherwise, it's nil."
       update-count)))
 
 (cl-defun seam-set-buffer-name (&optional (buffer (current-buffer)))
-  (with-current-buffer buffer
-    (rename-buffer
-     (seam-format-title (seam-get-title-from-buffer)
-                        (seam-get-note-type (buffer-file-name buffer))))))
+  (when-let ((title (seam-get-title-from-buffer)))
+    (with-current-buffer buffer
+      (rename-buffer
+       (seam-format-title title
+                          (seam-get-note-type (buffer-file-name buffer)))))))
 
 (defun seam-setup-buffer ()
   "Setup hooks when loading a Seam file."
