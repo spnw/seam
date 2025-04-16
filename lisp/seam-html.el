@@ -37,6 +37,26 @@
 
 (require 'ox-html)
 
+;;; Org <9.7 compatibility.
+
+(fset 'seam-html--element-parent-element
+ (if (fboundp 'org-element-parent-element)
+     'org-element-parent-element
+   'org-export-get-parent-element))
+
+(fset 'seam-html--element-parent
+ (if (fboundp 'org-element-parent)
+     'org-element-parent
+   (lambda (node)
+     (org-element-property :parent node))))
+
+(fset 'seam-html--element-type-p
+      (if (fboundp 'org-element-type-p)
+          'org-element-type-p
+        (lambda (node types)
+          (memq (org-element-type node)
+                (ensure-list types)))))
+
 ;;; NOTE: This function does not respect `:headline-levels' or
 ;;; `:html-self-link-headlines'.
 (defun seam-html-headline (headline contents info)
@@ -102,8 +122,8 @@ images, set it to:
   (lambda (paragraph) (org-element-property :caption paragraph))"
   (let ((paragraph (pcase (org-element-type element)
 		     (`paragraph element)
-		     (`link (org-element-parent element)))))
-    (and (org-element-type-p paragraph 'paragraph)
+		     (`link (seam-html--element-parent element)))))
+    (and (seam-html--element-type-p paragraph 'paragraph)
 	 (or (not (and (boundp 'seam-html-standalone-image-predicate)
                      (fboundp seam-html-standalone-image-predicate)))
 	     (funcall seam-html-standalone-image-predicate paragraph))
@@ -187,9 +207,9 @@ INFO is a plist holding contextual information.  See
 	         ;; do this for the first link in parent (inner image link
 	         ;; for inline images).  This is needed as long as
 	         ;; attributes cannot be set on a per link basis.
-	         (let* ((parent (org-element-parent-element link))
-		              (link (let ((container (org-element-parent link)))
-			                    (if (and (org-element-type-p container 'link)
+	         (let* ((parent (seam-html--element-parent-element link))
+		              (link (let ((container (seam-html--element-parent link)))
+			                    (if (and (seam-html--element-type-p container 'link)
 				                           (org-html-inline-image-p link info))
 			                        container
 			                      link))))
@@ -268,7 +288,7 @@ INFO is a plist holding contextual information.  See
 	        (_
            (if (and destination
                     (memq (plist-get info :with-latex) '(mathjax t))
-                    (org-element-type-p destination 'latex-environment)
+                    (seam-html--element-type-p destination 'latex-environment)
                     (eq 'math (org-latex--environment-type destination)))
                ;; Caption and labels are introduced within LaTeX
 	             ;; environment.  Use "ref" or "eqref" macro, depending on user
@@ -279,7 +299,7 @@ INFO is a plist holding contextual information.  See
                     (seam-html-standalone-image-predicate
                      #'org-html--has-caption-p)
                     (counter-predicate
-                     (if (org-element-type-p destination 'latex-environment)
+                     (if (seam-html--element-type-p destination 'latex-environment)
                          #'org-html--math-environment-p
                        #'org-html--has-caption-p))
                     (number
