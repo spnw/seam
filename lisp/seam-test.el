@@ -39,7 +39,7 @@
 
 (defmacro seam-test-environment (&rest body)
   (declare (indent 0))
-  `(let* ((seam-test-directory (make-temp-file "seam-test" t))
+  `(let* ((seam-test-directory (file-name-as-directory (make-temp-file "seam-test" t)))
           (seam-note-directory seam-test-directory)
           (default-directory seam-test-directory)
           (seam-note-types '("private" "public"))
@@ -70,7 +70,7 @@
            (mapcar #'kill-buffer (list ,@(mapcar #'car varlist))))))))
 
 (defun seam-test-strip-testdir (filename)
-  (string-remove-prefix (concat seam-test-directory "/") filename))
+  (string-remove-prefix seam-test-directory filename))
 
 (defun seam-test-list-files ()
   (mapcar
