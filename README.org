@@ -42,6 +42,9 @@ docstrings and the Seam customization group when in any doubt.
 - Tags in note title headlines are not ignored; they are treated as
   part of the title.
 
+- =seam:= links /must/ have a description.  Bare links are not
+  supported.
+
 *** Upgrading
 
 As a new project, Seam is very much in flux.  Whenever you upgrade it,
