@@ -69,12 +69,12 @@
          (unwind-protect (progn ,@body)
            (mapcar #'kill-buffer (list ,@(mapcar #'car varlist))))))))
 
-(defun seam-test-remove-testdir (filename)
+(defun seam-test-strip-testdir (filename)
   (string-remove-prefix (concat seam-test-directory "/") filename))
 
 (defun seam-test-list-files ()
   (mapcar
-   #'seam-test-remove-testdir
+   #'seam-test-strip-testdir
    (directory-files-recursively seam-test-directory "")))
 
 (defun seam-test-add-contents (buffer contents)
@@ -222,7 +222,7 @@
               (seam-test-replace-contents bar "* qux")
               (list
                (seam-test-links-from-html "html/foo.html")
-               (mapcar #'seam-test-remove-testdir (seam-get-links-from-file (buffer-file-name foo)))
+               (mapcar #'seam-test-strip-testdir (seam-get-links-from-file (buffer-file-name foo)))
                (seam-test-list-files)))))))
 
 (ert-deftest seam-test-link-update-no-unnecessary-export ()
@@ -297,9 +297,9 @@ the class."
       (seam-test-add-contents foo (seam-test-link-to-buffer qux))
       (seam-test-add-contents bar (seam-test-link-to-buffer qux))
       (list
-       (mapcar #'seam-test-remove-testdir (seam-get-links-from-file (buffer-file-name foo)))
-       (mapcar #'seam-test-remove-testdir (seam-get-links-to-file (buffer-file-name bar)))
-       (mapcar #'seam-test-remove-testdir (seam-get-links-to-file (buffer-file-name qux))))))))
+       (mapcar #'seam-test-strip-testdir (seam-get-links-from-file (buffer-file-name foo)))
+       (mapcar #'seam-test-strip-testdir (seam-get-links-to-file (buffer-file-name bar)))
+       (mapcar #'seam-test-strip-testdir (seam-get-links-to-file (buffer-file-name qux))))))))
 
 (ert-deftest seam-test-delete-note ()
   "Test that deleting a note also deletes its HTML and re-exports linking
