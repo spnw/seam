@@ -33,6 +33,7 @@
 ;;; Code:
 
 (require 'seam-export)
+(require 'org)
 (require 'cl-lib)
 (require 'grep)
 
