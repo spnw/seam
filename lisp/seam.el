@@ -156,8 +156,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
       (save-restriction
         (widen)
         (goto-char 1)
-        (ignore-errors
-          (re-search-forward  "^\\* ")
+        (when (re-search-forward "^\\* " nil t)
           (let ((start (point)))
             (end-of-line)
             (let ((title (string-trim (buffer-substring-no-properties start (point)))))
@@ -175,8 +174,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
           (save-restriction
             (widen)
             (goto-char 1)
-            (ignore-errors
-              (re-search-forward  "^\\* ")
+            (when (re-search-forward "^\\* " nil t)
               (org-element-property :SEAM_SLUG (org-element-at-point))))))
       (seam-slugify (seam-get-title-from-buffer buffer))))
 
