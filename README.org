@@ -20,6 +20,8 @@ Be aware that Seam is a fully self-contained package, and is not
 likely to be compatible with things like [[https://www.orgroam.com/][Org-roam]] due to its vastly
 different approach.
 
+*Note:* Requires Emacs 29 or greater, with Org 9.6 or greater.
+
 *** Getting started
 
 The easiest way to begin is to follow the brief [[https://wiki.plexwave.org/seam-tutorial][tutorial]].
