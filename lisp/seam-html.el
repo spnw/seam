@@ -1,6 +1,7 @@
 ;;; seam-html.el --- Seam HTML exporter  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2025 Spencer Williams
+;; Copyright (C) 2011-2025 Free Software Foundation, Inc.
 
 ;; Author: Spencer Williams <spnw@plexwave.org>
 
@@ -28,10 +29,9 @@
 ;; This was blithely hacked together using large chunks of code lifted
 ;; straight from ox-html.el, and could do with much improvement.
 ;;
-;; Original ox-html code is licensed under GPL v3+. Copyright (c)
-;; 2011-2025 Free Software Foundation, Inc. Original authors: Carsten
-;; Dominik <carsten.dominik@gmail.com> and Jambunathan K <kjambunathan
-;; at gmail dot com>.
+;; The original authors of ox-html are:
+;;     Carsten Dominik <carsten.dominik@gmail.com>
+;;     Jambunathan K <kjambunathan at gmail dot com>
 
 ;;; Code:
 
