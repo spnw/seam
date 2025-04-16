@@ -264,7 +264,7 @@ notes)."
        "contents"
        (seam-export--to-string
          (insert-file-contents note-file)
-         (re-search-forward (org-headline-re 1))
+         (re-search-forward "^\\* ")
          (org-mode)                    ;Needed for `org-set-property'.
          (org-set-property "seam-title-p" "t")))
       (seam-export--replace-variable
