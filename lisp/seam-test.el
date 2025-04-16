@@ -66,6 +66,8 @@
      (let ,options
        (let ,(cl-loop for (name . args) in varlist
                       collect `(,name (seam-make-note ,@args)))
+         ;; FIXME: It's quite possible for tests to fail in such a way
+         ;; that this does not kill the buffers.
          (unwind-protect (progn ,@body)
            (mapcar #'kill-buffer (list ,@(mapcar #'car varlist))))))))
 
