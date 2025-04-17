@@ -121,9 +121,9 @@
 (ert-deftest seam-test-make-note-weird-filename ()
   (should
    (equal
-    '("./Weird file name!" ("private/weird-file-name.org"))
+    '("./Weir'd file name!" ("private/weird-file-name.org"))
     (seam-test-with-notes ()
-        ((weird "./Weird file name! "))
+        ((weird "./Weir'd file name! "))
       (list (buffer-name weird)
             (seam-test-list-files))))))
 

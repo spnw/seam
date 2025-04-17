@@ -72,7 +72,10 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (mapcar #'car seam-export-alist))
 
 (defun seam-slugify (title)
-  (downcase (string-join (string-split title "\\W+" t) "-")))
+  (setq title (string-replace "'" "" title))
+  (setq title (string-split title "\\W+" t))
+  (setq title (string-join title "-"))
+  (downcase title))
 
 (defun seam-lookup-slug (slug)
   (cl-dolist (type seam-note-types)

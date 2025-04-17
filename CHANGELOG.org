@@ -35,6 +35,8 @@
 
 *** Bugfixes
 
+- Notes with single quotes in the name (') are no longer broken.
+
 - =seam-visited-notes= no longer returns buffers that visit non-note
   files within =seam-note-directory=.  This could have resulted in
   Seam inappropriately modifying those files (e.g. updating links).
