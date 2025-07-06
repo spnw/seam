@@ -304,9 +304,7 @@ completion prompt is given to choose the type."
 (defun seam-post-save-or-rename (old new &optional previous-links-from-file slug-or-title-changed)
   (unless (string= old new)
     (seam-update-links old new)
-    (seam-delete-html-files-for-note old)
-    (dolist (dir (seam-html-directories))
-      (delete-file (file-name-concat dir (concat (file-name-base old) ".html")))))
+    (seam-delete-html-files-for-note old))
   (seam-export-note new)
   (let* ((current-links (seam-get-links-from-file new))
          (added-links (cl-set-difference current-links
