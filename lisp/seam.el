@@ -301,6 +301,13 @@ completion prompt is given to choose the type."
         (delete-file html)
         (message "Deleted %s" html)))))
 
+(defun seam--rename-file (old new interactive)
+  (rename-file old new)
+  (when interactive
+    (set-visited-file-name new nil t)
+    (seam-set-buffer-name))
+  (seam-post-save-or-rename old new))
+
 (defun seam-post-save-or-rename (old new &optional previous-links-from-file slug-or-title-changed)
   (unless (string= old new)
     (seam-update-links old new)
@@ -367,13 +374,12 @@ completion prompt is given to choose the type."
           (seam-set-buffer-name)
           t)))))
 
-(defun seam--set-note-type (file new-type)
+(defun seam--set-note-type (file new-type interactive)
   (let ((old-type (seam-get-note-type file))
         (new-file (seam-make-file-name (file-name-base file) new-type)))
     (if (string= new-type old-type)
         file
-      (rename-file file new-file)
-      (seam-post-save-or-rename file new-file)
+      (seam--rename-file file new-file interactive)
       new-file)))
 
 ;;;###autoload
@@ -393,10 +399,7 @@ from 1).  Otherwise a completion prompt is given for the desired type."
                                 (remove old-type seam-note-types))
                old-type)
            t)))
-  (let ((new-file (seam--set-note-type file new-type)))
-    (when interactive
-      (set-visited-file-name new-file nil t)
-      (seam-set-buffer-name))))
+  (seam--set-note-type file new-type interactive))
 
 (defun seam-update-links (old new)
   (let ((old-slug (file-name-base old))
