@@ -314,6 +314,7 @@ notes)."
     (error "Nothing to export.  Please configure `seam-export-alist'."))
   (dolist (dir (seam-note-subdirectories))
     (dolist (file (directory-files dir t seam-note-file-regexp))
+      (seam-delete-html-files-for-note file)
       (seam-export-note file))))
 
 (provide 'seam-export)
