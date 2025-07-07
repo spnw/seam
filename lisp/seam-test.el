@@ -510,6 +510,19 @@ it."
       (seam-test-add-contents note ":PROPERTIES:\n:SEAM_SLUG: c-vs-cpp\n:END:")
       (seam-test-list-files)))))
 
+(ert-deftest seam-test-removing-type-from-export-alist ()
+  (should
+   (equal
+    '("public/note.org")
+    (seam-test-with-notes ()
+        ((note "Note" "public"))
+      (setq seam-export-alist
+            `((,(file-name-concat seam-test-directory "html")
+               :types ("foo")
+               :root-path "/")))
+      (seam-export-all-notes)
+      (seam-test-list-files)))))
+
 (provide 'seam-test)
 
 ;;; seam-test.el ends here
