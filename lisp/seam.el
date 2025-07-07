@@ -53,9 +53,25 @@
   :type 'string)
 
 (defcustom seam-note-types '("private" "public")
-  "Seam note types."
+  "List of valid Seam note types.  Each element can either be a
+string (the name of the type), or an alist.  If using an alist,
+the car should be the type name, and the cdr should be a plist
+containing any number of these properties:
+
+  `:create-as-draft'
+
+   When this is non-nil, new Seam notes of this type will be
+   created as drafts.  If this is missing, falls back to
+   `seam-create-as-draft'."
   :group 'seam
-  :type '(repeat string))
+  :type '(repeat
+          (choice string
+                  (alist :key-type string :value-type plist))))
+
+(defcustom seam-create-as-draft nil
+  "When non-nil, new Seam notes will be created as drafts."
+  :group 'seam
+  :type 'boolean)
 
 (defun seam-format-title-default (title type draft-p)
   "Default Seam title formatter.  Formats like this: \"TITLE (TYPE[ draft])\"."
@@ -209,9 +225,14 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (seam-validate-note-type type)
   (seam-ensure-note-subdirectories-exist)
   (let* ((slug (seam-slugify title))
+         (draft-p
+          (if-let ((result (plist-member (cdr (assoc type (mapcar #'ensure-list seam-note-types)))
+                                         :create-as-draft)))
+              (cadr result)
+            seam-create-as-draft))
          (file (file-name-concat seam-note-directory
                                  type
-                                 (concat slug ".org"))))
+                                 (concat (when draft-p "-") slug ".org"))))
     (when (string= "" slug)
       (error "Cannot create a note with an empty slug"))
     (seam--check-conflict slug)
