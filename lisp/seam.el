@@ -82,7 +82,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (downcase title))
 
 (defun seam-lookup-slug (slug)
-  (cl-dolist (type seam-note-types)
+  (cl-dolist (type (seam-get-all-note-type-names))
     (let ((file (file-name-concat seam-note-directory type (concat slug ".org")))
           (draft-file (file-name-concat seam-note-directory type (concat "-" slug ".org"))))
       (cond
@@ -117,7 +117,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam-ensure-note-subdirectories-exist ()
   (unless seam-note-directory
     (error "Please set `seam-note-directory'"))
-  (cl-dolist (type seam-note-types)
+  (cl-dolist (type (seam-get-all-note-type-names))
     (let ((dir (file-name-concat seam-note-directory type)))
       (seam-ensure-directory-exists dir))))
 
@@ -126,6 +126,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   :group 'seam
   :type '(choice (const :tag "Sort by title" title)
                  (const :tag "Sort by modification date" modified)))
+
+(defun seam-get-all-note-type-names ()
+  (mapcar (lambda (x) (car (ensure-list x))) seam-note-types))
 
 (cl-defgeneric seam-get-all-notes (sort-by))
 
@@ -197,7 +200,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (funcall seam-title-formatter title type draft-p))
 
 (defun seam-validate-note-type (type)
-  (unless (member type seam-note-types)
+  (unless (member type (seam-get-all-note-type-names))
     (error "`%s' is not a valid Seam note type" type)))
 
 (defun seam-make-note (title &optional type select)
@@ -240,10 +243,15 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 (defun seam--read-type (prompt arg &optional choices)
   (when arg
     (if (listp arg)
-        (let ((type (funcall seam-completing-read-function prompt (or choices seam-note-types) nil t)))
+        (let ((type (funcall seam-completing-read-function
+                             prompt
+                             (or choices (seam-get-all-note-type-names))
+                             nil
+                             t)))
           (seam-validate-note-type type)
           type)
-      (nth (1- arg) seam-note-types))))
+      (nth (1- arg)
+           (seam-get-all-note-type-names)))))
 
 ;;;###autoload
 (defun seam-find-note (arg)
@@ -257,7 +265,7 @@ completion prompt is given to choose the type."
   (interactive "P")
   (let* ((type (seam--read-type "Type: " arg))
          (seam--subset
-          (if type (list type) seam-note-types)))
+          (if type (list type) (seam-get-all-note-type-names))))
     (cl-destructuring-bind (completion . file)
         (seam-read-title "Open note: ")
       (if file
@@ -271,7 +279,7 @@ completion prompt is given to choose the type."
 (cl-defun seam-get-note-type (file &optional no-error)
   (when (and file (equal "org" (file-name-extension file)))
     (let ((type (cadr (nreverse (file-name-split file)))))
-      (when (member type seam-note-types)
+      (when (member type (seam-get-all-note-type-names))
         (cl-return-from seam-get-note-type type))))
   (unless no-error
     (error "%s is not a Seam note" file)))
@@ -416,7 +424,7 @@ from 1).  Otherwise a completion prompt is given for the desired type."
            (or (seam--read-type "New type: "
                                 ;; HACK: Treat nil prefix as C-u.
                                 (or current-prefix-arg '(4))
-                                (remove old-type seam-note-types))
+                                (remove old-type (seam-get-all-note-type-names)))
                old-type)
            t)))
   (seam--set-note-type file new-type interactive))
@@ -447,7 +455,7 @@ from 1).  Otherwise a completion prompt is given for the desired type."
                    count (if (= count 1) "" "s")))))))
 
 (defun seam--active-subset ()
-  (or seam--subset seam-note-types))
+  (or seam--subset (seam-get-all-note-type-names)))
 
 (defun seam-note-subdirectories ()
   (cl-loop for type in (seam--active-subset)
@@ -487,7 +495,7 @@ Otherwise, it's nil."
              find-program
              (string-join (mapcar (lambda (type)
                                     (shell-quote-argument (concat type "/")))
-                                  seam-note-types)
+                                  (seam-get-all-note-type-names))
                           " ")
              (shell-quote-argument "*.org")
              (shell-quote-argument ".*")

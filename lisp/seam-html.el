@@ -166,11 +166,13 @@ INFO is a plist holding contextual information.  See
          (path
 	        (cond
            ((string= "seam" link-type)
-            (let ((slug raw-path))
+            (let ((slug (string-remove-prefix "-" raw-path)))
               (when-let ((file (seam-lookup-slug slug)))
                 (let ((type (seam-get-note-type file)))
                   (when (and (member type seam-export--types)
-                             (file-exists-p (seam-make-file-name slug type)))
+                             (or seam-export--include-drafts
+                                 (not (seam-draft-p file)))
+                             (file-exists-p (seam-make-file-name raw-path type)))
                     (concat seam-export--root-path
                             slug
                             (if seam-export--no-extension "" ".html")))))))
