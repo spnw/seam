@@ -33,6 +33,7 @@
 (defvar seam-export--types nil)
 (defvar seam-export--template nil)
 (defvar seam-export--root-path nil)
+(defvar seam-export--include-drafts nil)
 (defvar seam-export--no-extension nil)
 (defvar seam-export--internal-link-class nil)
 (defvar seam-export--options nil)
@@ -69,6 +70,10 @@ properties:
 
     The root path used for rendering internal links.  Defaults to \"\",
     which means all paths are relative.
+
+  `:include-drafts'
+
+    Whether to export draft notes as well.  Defaults to nil.
 
   `:no-extension'
 
@@ -278,7 +283,8 @@ notes)."
     (buffer-string)))
 
 (defun seam-export-note (file)
-  (let ((type (seam-get-note-type file)))
+  (let ((type (seam-get-note-type file))
+        (draft-p (seam-draft-p file)))
     (cl-loop for (dir . plist) in seam-export-alist
              do
              (let ((types (plist-get plist :types))
@@ -294,9 +300,12 @@ notes)."
                                                    seam-export-template-file))
                        (seam-export-template-string seam-export-template-string)
                        (t (error "You must specify a template for export (see `seam-export-alist')")))))
-                 (when (member type types)
+                 (when (and (member type types)
+                            (or (not (seam-draft-p file))
+                                (plist-get plist :include-drafts)))
                    (let ((seam-export--types types)
                          (seam-export--root-path (or (plist-get plist :root-path) ""))
+                         (seam-export--include-drafts (plist-get plist :include-drafts))
                          (seam-export--no-extension (plist-get plist :no-extension))
                          (seam-export--template template)
                          (seam-export--internal-link-class

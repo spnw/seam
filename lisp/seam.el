@@ -79,9 +79,13 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
 
 (defun seam-lookup-slug (slug)
   (cl-dolist (type seam-note-types)
-    (let ((file (file-name-concat seam-note-directory type (concat slug ".org"))))
-      (when (file-exists-p file)
-        (cl-return (expand-file-name file))))))
+    (let ((file (file-name-concat seam-note-directory type (concat slug ".org")))
+          (draft-file (file-name-concat seam-note-directory type (concat "-" slug ".org"))))
+      (cond
+       ((file-exists-p file)
+        (cl-return (expand-file-name file)))
+       ((file-exists-p draft-file)
+        (cl-return (expand-file-name draft-file)))))))
 
 (defun seam--check-conflict (slug)
   (when (seam-lookup-slug slug)
@@ -264,11 +268,11 @@ completion prompt is given to choose the type."
   (unless no-error
     (error "%s is not a Seam note" file)))
 
-(defun seam-make-file-name (slug type)
+(defun seam-make-file-name (slug type &optional draft)
   (expand-file-name
    (file-name-concat
     seam-note-directory type
-    (concat slug ".org"))))
+    (concat (when draft "-") slug ".org"))))
 
 (defun seam-get-links-to-file (file)
   "Return filename of each note which links to FILE."
@@ -345,14 +349,18 @@ completion prompt is given to choose the type."
               (when type-changed
                 (seam-get-links-to-file new))))))))
 
+(defun seam-draft-p (file)
+  (string-prefix-p "-" (file-name-base file)))
+
 (defun seam-save-buffer ()
   (let* ((old (buffer-file-name))
-         (type (seam-get-note-type old t)))
+         (type (seam-get-note-type old t))
+         (draft-p (seam-draft-p old)))
     (when type
       (unless (seam-get-title-from-buffer)
         (error "Note must have a title"))
       (let* ((slug (seam-get-slug-from-buffer))
-             (new (seam-make-file-name slug type))
+             (new (seam-make-file-name slug type draft-p))
              (newly-created-p (not (file-exists-p old)))
              (slug-changed-p (not (string= slug (file-name-base old))))
              (title-changed-p (unless newly-created-p
@@ -360,7 +368,7 @@ completion prompt is given to choose the type."
                                               (seam-get-title-from-file old))))))
         (unless (string= old new)       ;This is valid because
                                         ;`seam-save-buffer' cannot
-                                        ;change type.
+                                        ;change type or draft status.
           (seam--check-conflict slug)
           (rename-file old new)
           (set-visited-file-name new nil t))
@@ -405,13 +413,26 @@ from 1).  Otherwise a completion prompt is given for the desired type."
            t)))
   (seam--set-note-type file new-type interactive))
 
+;;;###autoload
+(defun seam-toggle-draft (file &optional interactive)
+  "Toggle the draft status of Seam note FILE."
+  (interactive (list (buffer-file-name) t))
+  (seam-get-note-type file)          ;Error if file isn't a Seam note.
+  (let* ((base (file-name-nondirectory file))
+         (new-file (file-name-concat
+                    (file-name-directory file)
+                    (if (string-prefix-p "-" base)
+                        (string-remove-prefix "-" base)
+                      (concat "-" base)))))
+    (seam--rename-file file new-file interactive)))
+
 (defun seam-update-links (old new)
-  (let ((old-slug (file-name-base old))
-        (new-slug (file-name-base new)))
-    (unless (string= old-slug new-slug)
+  (let* ((old-link (file-name-base old))
+         (new-link (file-name-base new)))
+    (unless (string= old-link new-link)
       (let ((count (seam-replace-string-in-all-notes
-                    (format "[[seam:%s]" old-slug)
-                    (format "[[seam:%s]" new-slug)
+                    (format "[[seam:%s]" old-link)
+                    (format "[[seam:%s]" new-link)
                     t)))
         (unless (zerop count)
           (message "Updated links in %d file%s"
@@ -605,7 +626,8 @@ link will replace it."
   "k" #'seam-delete-note
   "l" #'seam-insert-link
   "s" #'seam-search
-  "t" #'seam-set-note-type)
+  "t" #'seam-set-note-type
+  "d" #'seam-toggle-draft)
 
 (org-link-set-parameters "seam" :follow #'seam-link-open)
 
