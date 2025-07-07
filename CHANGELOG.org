@@ -21,6 +21,14 @@
 
 *** New features
 
+- Notes can now be set as drafts for finer-grained control over
+  exporting.  If =seam-create-as-draft= is non-nil, new notes will be
+  created as drafts.  See =seam-note-types= for info on overriding
+  this per type.  A note's draft status can be toggled with the new
+  command =seam-toggle-draft=.  A new =seam-export-alist= option,
+  =:include-drafts=, controls whether drafts are included in a given
+  export profile.
+
 - An option has been added to export internal links with a custom CSS
   class.  The default is set by =seam-export-internal-link-class=, and
   can overridden per-export using =:internal-link-class=.
@@ -38,6 +46,12 @@
 
 - Completion support is somewhat improved.  =ido-completing-read= now
   works properly, and Seam no longer binds =completion-ignore-case=.
+
+- Changes to =seam-export-alist= are now respected when forcibly
+  re-exporting (e.g. with =seam-export-all-notes=).  This is done by
+  always deleting old HTML files before exporting, thus avoiding the
+  situation where notes of no-longer-exported types still have files
+  hanging around.
 
 *** Bugfixes
 
