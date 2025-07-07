@@ -172,6 +172,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
     (insert-file-contents file)
     (seam-get-title-from-buffer)))
 
+(defun seam-get-slug-from-file-name (file)
+  (string-remove-prefix "-" (file-name-base file)))
+
 (cl-defun seam-get-slug-from-buffer (&optional (buffer (current-buffer)))
   (or (with-current-buffer buffer
         (save-mark-and-excursion
@@ -295,11 +298,12 @@ completion prompt is given to choose the type."
     (seam-get-links-from-buffer)))
 
 (defun seam-delete-html-files-for-note (note-file)
-  (dolist (dir (seam-html-directories))
-    (let ((html (file-name-concat dir (concat (file-name-base note-file) ".html"))))
-      (when (file-exists-p html)
-        (delete-file html)
-        (message "Deleted %s" html)))))
+  (let ((html-nd (concat (seam-get-slug-from-file-name note-file) ".html")))
+    (dolist (dir (seam-html-directories))
+      (let ((html (file-name-concat dir html-nd)))
+        (when (file-exists-p html)
+          (delete-file html)
+          (message "Deleted %s" html))))))
 
 (defun seam--rename-file (old new interactive)
   (rename-file old new)

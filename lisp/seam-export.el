@@ -239,7 +239,7 @@ notes)."
 (defun seam-export--note-to-html (note-file html-directory)
   (seam-ensure-directory-exists html-directory)
   (let ((html-file (file-name-concat html-directory
-                                     (concat (file-name-base note-file) ".html")))
+                                     (concat (seam-get-slug-from-file-name note-file) ".html")))
         (modified (file-attribute-modification-time
                    (file-attributes note-file))))
     (with-temp-buffer
