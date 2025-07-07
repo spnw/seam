@@ -6,6 +6,10 @@
   should have been all along.  Make sure to update your =init.el=
   accordingly.
 
+- Your =seam-title-formatter= function should now take three arguments
+  instead of two: the third arg (=draft-p=) will be non-nil if the
+  note is a draft.
+
 **** Renamed functions
 
 - =seam-replace-string-in-notes= is now

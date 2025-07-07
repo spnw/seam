@@ -44,7 +44,7 @@
           (default-directory seam-test-directory)
           (seam-note-types '("private" "public"))
           (seam-default-note-type "private")
-          (seam-title-formatter (lambda (title _type) title))
+          (seam-title-formatter (lambda (title _type _draft-p) title))
           (seam-export-template-file nil)
           (seam-export-template-string seam-export-default-template-string)
           (seam-export-internal-link-class nil)
@@ -206,7 +206,8 @@
    (equal
     "[private] Note"
     (seam-test-with-notes ((seam-title-formatter
-                            (lambda (title type) (format "[%s] %s" type title))))
+                            (lambda (title type _draft-p)
+                              (format "[%s] %s" type title))))
         ((note "Note"))
       (buffer-name note)))))
 

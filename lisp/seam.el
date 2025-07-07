@@ -57,9 +57,13 @@
   :group 'seam
   :type '(repeat string))
 
-(defun seam-format-title-default (title type)
-  "Default Seam title formatter.  Formats like this: \"TITLE (TYPE)\"."
-  (format "%s %s" title (propertize (format "(%s)" type) 'face 'font-lock-comment-face)))
+(defun seam-format-title-default (title type draft-p)
+  "Default Seam title formatter.  Formats like this: \"TITLE (TYPE[ draft])\"."
+  (format "%s %s"
+          title
+          (propertize
+           (format "(%s%s)" type (if draft-p " draft" ""))
+           'face 'font-lock-comment-face)))
 
 (defcustom seam-title-formatter
   #'seam-format-title-default
@@ -189,8 +193,8 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
               (org-element-property :SEAM_SLUG (org-element-at-point))))))
       (seam-slugify (seam-get-title-from-buffer buffer))))
 
-(defun seam-format-title (title type)
-  (funcall seam-title-formatter title type))
+(defun seam-format-title (title type draft-p)
+  (funcall seam-title-formatter title type draft-p))
 
 (defun seam-validate-note-type (type)
   (unless (member type seam-note-types)
@@ -224,7 +228,11 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
                               :test #'equal)
                    (and self (list self)))))
       (let ((files (cl-loop for (title . file) in notes
-                            collect (cons (seam-format-title title (seam-get-note-type file)) file))))
+                            collect (cons (seam-format-title
+                                           title
+                                           (seam-get-note-type file)
+                                           (seam-draft-p file))
+                                          file))))
         (let ((completion (string-trim (funcall seam-completing-read-function prompt (mapcar #'car files)))))
           (or (assoc completion files)
               (cons completion nil)))))))
@@ -534,10 +542,12 @@ Otherwise, it's nil."
 
 (cl-defun seam-set-buffer-name (&optional (buffer (current-buffer)))
   (when-let ((title (seam-get-title-from-buffer)))
-    (with-current-buffer buffer
-      (rename-buffer
-       (seam-format-title title
-                          (seam-get-note-type (buffer-file-name buffer)))))))
+    (let ((file (buffer-file-name buffer)))
+      (with-current-buffer buffer
+        (rename-buffer
+         (seam-format-title title
+                            (seam-get-note-type file)
+                            (seam-draft-p file)))))))
 
 (defun seam-setup-buffer ()
   "Setup hooks when loading a Seam file."
