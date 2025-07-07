@@ -99,7 +99,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (org-mark-ring-push)
   (if-let ((file (seam-lookup-slug path)))
       (find-file file)
-    (seam-make-note path nil t))
+    (seam-create-note path nil t))
   (seam-set-buffer-name))
 
 (defvar seam-note-file-regexp "\\`[^.].+\\.org\\'")
@@ -203,7 +203,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (unless (member type (seam-get-all-note-type-names))
     (error "`%s' is not a valid Seam note type" type)))
 
-(defun seam-make-note (title &optional type select)
+(defun seam-create-note (title &optional type select)
   (unless type
     (setq type seam-default-note-type))
   (seam-validate-note-type type)
@@ -274,7 +274,7 @@ completion prompt is given to choose the type."
             ;; formatter function) (NOTE: Redundant if buffer wasn't
             ;; already open, as `seam-setup-buffer' does this too.)
             (seam-set-buffer-name))
-        (seam-make-note (string-trim completion) (or type seam-default-note-type) t)))))
+        (seam-create-note (string-trim completion) (or type seam-default-note-type) t)))))
 
 (cl-defun seam-get-note-type (file &optional no-error)
   (when (and file (equal "org" (file-name-extension file)))
@@ -621,7 +621,7 @@ link will replace it."
   (cl-destructuring-bind (completion . file) (seam-read-title "Insert note link: ")
     (let* ((new-buffer
             (unless file
-              (seam-make-note completion seam-default-note-type nil)))
+              (seam-create-note completion seam-default-note-type nil)))
            (selection (when (use-region-p)
                         (buffer-substring
                          (region-beginning)

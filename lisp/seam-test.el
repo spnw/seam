@@ -65,7 +65,7 @@
   `(seam-test-environment
      (let ,options
        (let ,(cl-loop for (name . args) in varlist
-                      collect `(,name (seam-make-note ,@args)))
+                      collect `(,name (seam-create-note ,@args)))
          ;; FIXME: It's quite possible for tests to fail in such a way
          ;; that this does not kill the buffers.
          (unwind-protect (progn ,@body)
@@ -102,7 +102,7 @@
      (cl-loop for ret = (re-search-forward "<a href=\"/\\(.*\\)?\">" nil t)
               while ret collect (match-string 1)))))
 
-(ert-deftest seam-test-make-note-private ()
+(ert-deftest seam-test-create-note-private ()
   (should
    (equal
     '("private/note.org")
@@ -110,7 +110,7 @@
         ((note "Note"))
       (seam-test-list-files)))))
 
-(ert-deftest seam-test-make-note-public ()
+(ert-deftest seam-test-create-note-public ()
   (should
    (equal
     '("html/note.html" "public/note.org")
@@ -118,7 +118,7 @@
         ((note "Note" "public"))
       (seam-test-list-files)))))
 
-(ert-deftest seam-test-make-note-weird-filename ()
+(ert-deftest seam-test-create-note-weird-filename ()
   (should
    (equal
     '("./Weir'd file name!" ("private/weird-file-name.org"))
@@ -153,22 +153,22 @@
       (buffer-name note)
       (seam-get-title-from-file (buffer-file-name note))))))
 
-(ert-deftest seam-test-make-note-invalid-type ()
+(ert-deftest seam-test-create-note-invalid-type ()
   (should-error
    (seam-test-environment
-     (kill-buffer (seam-make-note "Note" "invalid-type")))))
+     (kill-buffer (seam-create-note "Note" "invalid-type")))))
 
-(ert-deftest seam-test-make-note-name-conflict ()
+(ert-deftest seam-test-create-note-name-conflict ()
   (should-error
    (seam-test-environment
-     (kill-buffer (seam-make-note " Note 1 "))
-     (kill-buffer (seam-make-note "Note_1")))))
+     (kill-buffer (seam-create-note " Note 1 "))
+     (kill-buffer (seam-create-note "Note_1")))))
 
-(ert-deftest seam-test-make-note-name-conflict-different-types ()
+(ert-deftest seam-test-create-note-name-conflict-different-types ()
   (should-error
    (seam-test-environment
-     (kill-buffer (seam-make-note "Note"))
-     (kill-buffer (seam-make-note "Note" "public")))))
+     (kill-buffer (seam-create-note "Note"))
+     (kill-buffer (seam-create-note "Note" "public")))))
 
 (ert-deftest seam-test-rename-note ()
   (should

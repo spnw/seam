@@ -12,6 +12,8 @@
 
 **** Renamed functions
 
+- =seam-make-note= is now =seam-create-note=.
+
 - =seam-replace-string-in-notes= is now
   =seam-replace-string-in-all-notes=.
 
