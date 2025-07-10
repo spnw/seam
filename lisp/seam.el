@@ -315,8 +315,12 @@ completion prompt is given to choose the type."
 
 (defun seam-get-links-to-file (file)
   "Return filename of each note which links to FILE."
-  (remove (expand-file-name file)
-          (seam-note-files-containing-string (format "[[seam:%s]" (file-name-base file)))))
+  (cl-loop for file in (remove (expand-file-name file)
+                               (seam-note-files-containing-string
+                                (format "[[seam:%s]" (file-name-base file))))
+           when (or seam-export--include-drafts
+                    (not (seam-draft-p file)))
+           collect file))
 
 (cl-defun seam-get-links-from-buffer (&optional (buffer (current-buffer)))
   "Return filename of each existing note which is linked to from BUFFER."

@@ -366,6 +366,21 @@ backlink."
         (insert-file-contents "html/bar.html")
         (buffer-string))))))
 
+(ert-deftest seam-test-backlinks-draft ()
+  "Test that linking to a note from a draft note does not create a
+backlink."
+  (should
+   (equal
+    ""
+    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+        ((foo "foo" "public" nil t)
+         (bar "bar" "public"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
+      (with-temp-buffer
+        (insert-file-contents "html/bar.html")
+        (buffer-string))))))
+
 (ert-deftest seam-test-set-type-private ()
   "Test that setting a public note to private will delete its HTML file and
 update linking HTML files such that they no longer link to it."
