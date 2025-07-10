@@ -209,10 +209,8 @@
     (seam-test-with-notes ((seam-title-formatter
                             (lambda (title type draft-p)
                               (format "[%s%s] %s" type (if draft-p " draft" "") title))))
-        ((note "Note"))
-      (with-current-buffer note
-        (call-interactively 'seam-toggle-draft)
-        (buffer-name note))))))
+        ((note "Note" nil nil t))
+      (buffer-name note)))))
 
 (ert-deftest seam-test-link-update ()
   "Test that renaming a note updates its HTML and that of notes which link to it."
@@ -439,8 +437,6 @@ link to it."
        (seam-test-links-from-html "html/foo.html")
        (seam-test-list-files))))))
 
-;;; NOTE: This is the same test as `seam-test-set-draft', except that
-;;; we toggle bar's draft status twice.
 (ert-deftest seam-test-unset-draft ()
   "Test that toggling a note from draft to non-draft will export its
 HTML file and update linking HTML files such that they link to
@@ -450,11 +446,10 @@ it."
     '(("bar.html") ("html/bar.html" "html/foo.html" "public/bar.org" "public/foo.org"))
     (seam-test-with-notes ()
         ((foo "foo" "public")
-         (bar "bar" "public"))
+         (bar "bar" "public" nil t))
       (with-current-buffer foo
         (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
       (with-current-buffer bar
-        (call-interactively 'seam-toggle-draft)
         (call-interactively 'seam-toggle-draft))
       (list
        (seam-test-links-from-html "html/foo.html")

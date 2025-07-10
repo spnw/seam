@@ -219,17 +219,19 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (unless (member type (seam-get-all-note-type-names))
     (error "`%s' is not a valid Seam note type" type)))
 
-(defun seam-create-note (title &optional type select)
+(cl-defun seam-create-note (title &optional type select (draft-p nil draft-supplied-p))
   (unless type
     (setq type seam-default-note-type))
   (seam-validate-note-type type)
   (seam-ensure-note-subdirectories-exist)
   (let* ((slug (seam-slugify title))
          (draft-p
-          (if-let ((result (plist-member (cdr (assoc type (mapcar #'ensure-list seam-note-types)))
-                                         :create-as-draft)))
-              (cadr result)
-            seam-create-as-draft))
+          (if draft-supplied-p
+              draft-p
+            (if-let ((result (plist-member (cdr (assoc type (mapcar #'ensure-list seam-note-types)))
+                                           :create-as-draft)))
+                (cadr result)
+              seam-create-as-draft)))
          (file (file-name-concat seam-note-directory
                                  type
                                  (concat (when draft-p "-") slug ".org"))))
