@@ -338,29 +338,33 @@ notes such that they no longer link to it."
 (ert-deftest seam-test-backlinks-private ()
   "Test that linking to a note from a private note does not create a
 backlink."
-  (should-error
-   (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
-       ((foo "foo")
-        (bar "bar" "public"))
-     (with-current-buffer foo
-       (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
-     (with-temp-buffer
-       (insert-file-contents "html/bar.html")
-       (re-search-forward "<a href=\"/foo.html\">")))))
+  (should
+   (equal
+    ""
+    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+        ((foo "foo")
+         (bar "bar" "public"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
+      (with-temp-buffer
+        (insert-file-contents "html/bar.html")
+        (buffer-string))))))
 
 (ert-deftest seam-test-backlinks-delete ()
   "Test that deleting a note removes backlink."
-  (should-error
-   (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
-       ((foo "foo" "public")
-        (bar "bar" "public"))
-     (with-current-buffer foo
-       (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
-     (let ((delete-by-moving-to-trash nil))
-       (seam-delete-note (buffer-file-name foo)))
-     (with-temp-buffer
-       (insert-file-contents "html/bar.html")
-       (re-search-forward "<a href=\"/foo.html\">")))))
+  (should
+   (equal
+    ""
+    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+        ((foo "foo" "public")
+         (bar "bar" "public"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo (seam-test-link-to-buffer bar)))
+      (let ((delete-by-moving-to-trash nil))
+        (seam-delete-note (buffer-file-name foo)))
+      (with-temp-buffer
+        (insert-file-contents "html/bar.html")
+        (buffer-string))))))
 
 (ert-deftest seam-test-set-type-private ()
   "Test that setting a public note to private will delete its HTML file and
