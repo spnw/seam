@@ -228,10 +228,9 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
          (draft-p
           (if draft-supplied-p
               draft-p
-            (if-let ((result (plist-member (cdr (assoc type (mapcar #'ensure-list seam-note-types)))
-                                           :create-as-draft)))
-                (cadr result)
-              seam-create-as-draft)))
+            (cl-getf (cdr (assoc type (mapcar #'ensure-list seam-note-types)))
+                     :create-as-draft
+                     seam-create-as-draft)))
          (file (file-name-concat seam-note-directory
                                  type
                                  (concat (when draft-p "-") slug ".org"))))
