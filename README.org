@@ -1,7 +1,7 @@
 ** A personal wiki toolkit for Emacs
 
 [[https://wiki.plexwave.org/seam][Seam]] leverages the power of [[https://orgmode.org/][Org mode]] to make creating, linking, and
-exporting your notes easier.  It is geared particularly towards
+publishing your notes easier.  It is geared particularly towards
 creating a personal wiki — a place where you can share some portion of
 your notes with the world.  It takes inspiration from the likes of
 [[https://obsidian.md/][Obsidian]] and [[https://www.mediawiki.org/wiki/MediaWiki][MediaWiki]].

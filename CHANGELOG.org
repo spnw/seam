@@ -6,7 +6,7 @@
   should have been all along.  Make sure to update your =init.el=
   accordingly.
 
-- Seam now uses [[https://github.com/Wilfred/mustache.el][mustache.el]] for templating.  In Mustache
+- Seam now uses [[https://github.com/Wilfred/mustache.el][mustache.el]] for templating.  In Mustache,
   double-bracketed variables are escaped, so you must use
   triple-brackets for variables that include raw HTML.  Please see the
   updated =seam-export-default-template-string= for reference.
@@ -36,12 +36,12 @@
 
 - Custom template variables can now be defined, and built-in ones
   overridden.  This is done globally with
-  =seam-export-template-values=, or per-export with
+  =seam-export-template-values=, or per profile with
   =:template-values=.
 
 - An option has been added to export internal links with a custom CSS
   class.  The default is set by =seam-export-internal-link-class=, and
-  can overridden per-export using =:internal-link-class=.
+  can overridden per profile using =:internal-link-class=.
 
 - Custom slugs can now be set by adding the =SEAM_SLUG= property to a
   note's title headline.
@@ -51,11 +51,11 @@
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
 
-- In HTML templates, ={{title}}= now produces output with formatting
-  stripped out, so that it is more suitable for use in =<title>= tags.
-  To get a raw HTML-formatted title for =<h1>= tags and the like, you
-  should use the new ={{{raw-title}}}=.  As mentioned above, triple
-  brackets are the Mustache syntax for interpolating raw HTML.
+- In HTML templates, ={{title}}= now strips out formatting, so that it
+  is more suitable for use in =<title>= tags.  To get a raw
+  HTML-formatted title for =<h1>= tags and the like, you should use
+  the new ={{{raw-title}}}=.  As mentioned above, triple brackets are
+  the Mustache syntax for interpolating raw HTML.
 
 - When invoking =seam-delete-note=, the note's title is now mentioned.
   This is to reduce the risk of deleting the wrong note by mistake.
