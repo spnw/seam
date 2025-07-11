@@ -218,6 +218,21 @@ notes)."
                     (buffer-string)))
          (kill-buffer ,buf)))))
 
+(defmacro seam-export--to-plain-string (&rest body)
+  (declare (indent 0))
+  (let ((buf (gensym)))
+    `(let ((,buf (generate-new-buffer " *seam-export*")))
+       (unwind-protect
+           (progn (with-temp-buffer
+                    ,@body
+                    ;; This let prevents Org from popping up a window.
+                    (let ((org-export-show-temporary-export-buffer nil)
+                          (org-ascii-charset 'utf-8))
+                      (org-export-to-buffer 'ascii ,buf nil nil nil t seam-export--options nil)))
+                  (with-current-buffer ,buf
+                    (buffer-string)))
+         (kill-buffer ,buf)))))
+
 ;;; Some HACK-ery to get fully escaped and smartquote-ized string.
 (defun seam-export--escape-string (s)
   (string-remove-prefix
@@ -226,6 +241,11 @@ notes)."
     "</p>\n"
     (seam-export--to-string
       (insert s)))))
+
+(defun seam-export--smartquotize-string (s)
+  (string-chop-newline
+   (seam-export--to-plain-string
+     (insert s))))
 
 (defun seam-export--generate-backlinks (file)
   (seam-export--to-string
@@ -250,7 +270,7 @@ notes)."
        (mustache-render
         seam-export--template
         `(("title" .
-           ,(seam-export--escape-string
+           ,(seam-export--smartquotize-string
              (seam-get-title-from-file note-file)))
           ("modified" .
            ,(format-time-string

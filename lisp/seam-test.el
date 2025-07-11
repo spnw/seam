@@ -509,7 +509,7 @@ it."
 (ert-deftest seam-test-escape-title ()
   (should
    (equal
-    "&ldquo;quotes&rdquo; &amp; &lt;symbols&gt;\n"
+    "“quotes” &amp; &lt;symbols&gt;\n"
     (seam-test-with-notes ((seam-export-template-string "{{{title}}}"))
         ((note "\"quotes\" & <symbols>" "public"))
       (seam-export--file-string "html/quotes-symbols.html")))))
