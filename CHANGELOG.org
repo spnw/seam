@@ -34,6 +34,11 @@
   =:include-drafts=, controls whether drafts are included in a given
   export profile.
 
+- Custom template variables can now be defined, and built-in ones
+  overridden.  This is done globally with
+  =seam-export-template-values=, or per-export with
+  =:template-values=.
+
 - An option has been added to export internal links with a custom CSS
   class.  The default is set by =seam-export-internal-link-class=, and
   can overridden per-export using =:internal-link-class=.

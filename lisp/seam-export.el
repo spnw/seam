@@ -33,6 +33,7 @@
 
 (defvar seam-export--types nil)
 (defvar seam-export--template nil)
+(defvar seam-export--template-values nil)
 (defvar seam-export--root-path nil)
 (defvar seam-export--include-drafts nil)
 (defvar seam-export--no-extension nil)
@@ -66,6 +67,13 @@ properties:
     The HTML template string to be used by the exporter.  If this is
     missing, falls back to :template-file, `seam-export-template-file',
     or `seam-export-template-string' in that order.
+
+  `:template-values'
+
+    An alist of (VAR . VALUE) pairs, where VAR is a string naming
+    a template variable, and VALUE is the value to be used when
+    interpolating that variable.  See the mustache.el docs for
+    more information.  Defaults to nil.
 
   `:root-path'
 
@@ -165,6 +173,14 @@ format is documented at `seam-export-default-template-string'.
 See `seam-export-alist' for more information about specifying templates."
   :group 'seam-export
   :type '(choice string (const nil)))
+
+(defcustom seam-export-template-values nil
+  "An alist of (VAR . VALUE) pairs, where VAR is a string naming a
+template variable, and VALUE is the value to be used when
+interpolating that variable.  See the mustache.el docs for more
+information."
+  :group 'seam-export
+  :type '(alist :key-type string :value-type sexp))
 
 (defcustom seam-export-time-format "%e %B %Y"
   "Human-readable format for template time strings.  Passed to
@@ -275,30 +291,34 @@ notes)."
       (insert
        (mustache-render
         seam-export--template
-        `(("title" .
-           ,(seam-export--org-to-text
-             (seam-get-title-from-file note-file)))
-          ("raw-title" .
-           ,(seam-export--org-to-html
-             (seam-get-title-from-file note-file)))
-          ("modified" .
-           ,(format-time-string
-             seam-export-time-format
-             modified
-             seam-export-time-zone))
-          ("modified-dt" .
-           ,(format-time-string
-             seam-export-time-format-datetime
-             modified
-             seam-export-time-zone))
-          ("contents" .
-           ,(seam-export--export-to-html-string
-              (insert-file-contents note-file)
-              (re-search-forward "^\\* ")
-              (org-mode)               ;Needed for `org-set-property'.
-              (org-set-property "seam-title-p" "t")))
-          ("backlinks" .
-           ,(seam-export--generate-backlinks note-file)))))
+        (append
+         seam-export--template-values
+         seam-export-template-values
+         `(("title" .
+            ,(seam-export--org-to-text
+              (seam-get-title-from-file note-file)))
+           ("raw-title" .
+            ,(seam-export--org-to-html
+              (seam-get-title-from-file note-file)))
+           ("modified" .
+            ,(format-time-string
+              seam-export-time-format
+              modified
+              seam-export-time-zone))
+           ("modified-dt" .
+            ,(format-time-string
+              seam-export-time-format-datetime
+              modified
+              seam-export-time-zone))
+           ("contents" .
+            ,(seam-export--export-to-html-string
+               (insert-file-contents note-file)
+               (re-search-forward "^\\* ")
+               (org-mode)             ;Needed for `org-set-property'.
+               (org-set-property "seam-title-p" "t")))
+           ("backlinks" .
+            ,(seam-export--generate-backlinks note-file)))
+         nil)))
       (write-file html-file))))
 
 (defun seam-export--file-string (file)
@@ -313,7 +333,8 @@ notes)."
              do
              (let ((types (plist-get plist :types))
                    (template-file (plist-get plist :template-file))
-                   (template-string (plist-get plist :template-string)))
+                   (template-string (plist-get plist :template-string))
+                   (template-values (plist-get plist :template-values)))
                (unless types
                  (error "You must specify :types for export"))
                (let ((template
@@ -332,6 +353,7 @@ notes)."
                          (seam-export--include-drafts (plist-get plist :include-drafts))
                          (seam-export--no-extension (plist-get plist :no-extension))
                          (seam-export--template template)
+                         (seam-export--template-values template-values)
                          (seam-export--internal-link-class
                           (or (plist-get plist :internal-link-class)
                               seam-export-internal-link-class))

@@ -48,6 +48,7 @@
           (seam-title-formatter (lambda (title _type _draft-p) title))
           (seam-export-template-file nil)
           (seam-export-template-string seam-export-default-template-string)
+          (seam-export-template-values nil)
           (seam-export-internal-link-class nil)
           (seam-export-alist
            `((,(file-name-concat seam-test-directory "html")
@@ -560,6 +561,24 @@ accordingly."
                :root-path "/")))
       (seam-export-all-notes)
       (seam-test-list-files)))))
+
+(ert-deftest seam-test-template-values ()
+  "Test that custom variables can be used in templates, and that
+existing ones can be overridden."
+  (should
+   (equal
+    "Qux\nhello, world\n"
+    (seam-test-with-notes
+        ((seam-export-template-values '(("title" . "Bar")
+                                        ("greeting" . "hello, world")))
+         (seam-export-template-string "{{title}}\n{{greeting}}")
+         (seam-export-alist
+          `((,(file-name-concat seam-test-directory "html")
+             :types ("public")
+             :root-path "/"
+             :template-values (("title" . "Qux"))))))
+        ((foo "Foo" "public"))
+      (seam-export--file-string "html/foo.html")))))
 
 (provide 'seam-test)
 
