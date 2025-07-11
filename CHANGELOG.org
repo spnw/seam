@@ -6,6 +6,11 @@
   should have been all along.  Make sure to update your =init.el=
   accordingly.
 
+- Seam now uses [[https://github.com/Wilfred/mustache.el][mustache.el]] for templating.  In Mustache
+  double-bracketed variables are escaped, so you must use
+  triple-brackets for variables that include raw HTML.  Please see the
+  updated =seam-export-default-template-string= for reference.
+
 - Your =seam-title-formatter= function should now take three arguments
   instead of two: the third arg (=draft-p=) will be non-nil if the
   note is a draft.

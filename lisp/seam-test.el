@@ -326,7 +326,7 @@ notes such that they no longer link to it."
   "Test that linking to a note from a public note creates a backlink."
   (should
    (identity
-    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+    (seam-test-with-notes ((seam-export-template-string "{{{backlinks}}}"))
         ((foo "foo" "public")
          (bar "bar" "public"))
       (with-current-buffer foo
@@ -341,7 +341,7 @@ backlink."
   (should
    (equal
     ""
-    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+    (seam-test-with-notes ((seam-export-template-string "{{{backlinks}}}"))
         ((foo "foo")
          (bar "bar" "public"))
       (with-current-buffer foo
@@ -355,7 +355,7 @@ backlink."
   (should
    (equal
     ""
-    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+    (seam-test-with-notes ((seam-export-template-string "{{{backlinks}}}"))
         ((foo "foo" "public")
          (bar "bar" "public"))
       (with-current-buffer foo
@@ -372,7 +372,7 @@ backlink."
   (should
    (equal
     ""
-    (seam-test-with-notes ((seam-export-template-string "{{backlinks}}"))
+    (seam-test-with-notes ((seam-export-template-string "{{{backlinks}}}"))
         ((foo "foo" "public" nil t)
          (bar "bar" "public"))
       (with-current-buffer foo
@@ -510,7 +510,7 @@ it."
   (should
    (equal
     "&ldquo;quotes&rdquo; &amp; &lt;symbols&gt;\n"
-    (seam-test-with-notes ((seam-export-template-string "{{title}}"))
+    (seam-test-with-notes ((seam-export-template-string "{{{title}}}"))
         ((note "\"quotes\" & <symbols>" "public"))
       (seam-export--file-string "html/quotes-symbols.html")))))
 

@@ -20,7 +20,7 @@ Be aware that Seam is a fully self-contained package, and is not
 likely to be compatible with things like [[https://www.orgroam.com/][Org-roam]] due to its vastly
 different approach.
 
-*Note:* Requires Emacs 29 or greater, with Org 9.6 or greater.
+*Note:* Requires Emacs 29+, Org 9.6+, and [[https://github.com/Wilfred/mustache.el][mustache.el]].
 
 *** Getting started
 

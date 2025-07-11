@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'mustache)
 (require 'seam-html)
 
 (defvar seam-export--types nil)
@@ -115,18 +116,20 @@ See `seam-export-alist' for more information about specifying templates."
 <h1>{{title}}</h1>
 <p class=\"modified\">Last modified: <time datetime=\"{{modified-dt}}\">{{modified}}</time></p>
 </header>
-{{contents}}
+{{{contents}}}
 <section class=\"backlinks\">
 <h1>Backlinks</h1>
-{{backlinks}}
+{{{backlinks}}}
 </section>
 </main>
 </body>
 </html>"
   "The default HTML template string if no other template is specified.
 
-It should be plain HTML5. Several variables are defined which can be
-interpolated using the {{variable}} syntax:
+It should be plain HTML5.  Several variables are defined which
+can be interpolated using Mustache bracket syntax.  {{variable}}
+will HTML-escape the interpolated text, while {{{variable}}} will
+interpolate it as-is.
 
   `contents'
 
@@ -224,11 +227,6 @@ notes)."
     (seam-export--to-string
       (insert s)))))
 
-(defun seam-export--replace-variable (var replacement)
-  (goto-char 1)
-  (while (re-search-forward (format "{{%s}}" var) nil t)
-    (replace-match replacement t t)))
-
 (defun seam-export--generate-backlinks (file)
   (seam-export--to-string
     (let ((files (cl-sort
@@ -248,33 +246,30 @@ notes)."
         (modified (file-attribute-modification-time
                    (file-attributes note-file))))
     (with-temp-buffer
-      (insert seam-export--template)
-      (seam-export--replace-variable
-       "title"
-       (seam-export--escape-string
-        (seam-get-title-from-file note-file)))
-      (seam-export--replace-variable
-       "modified"
-       (format-time-string
-        seam-export-time-format
-        modified
-        seam-export-time-zone))
-      (seam-export--replace-variable
-       "modified-dt"
-       (format-time-string
-        seam-export-time-format-datetime
-        modified
-        seam-export-time-zone))
-      (seam-export--replace-variable
-       "contents"
-       (seam-export--to-string
-         (insert-file-contents note-file)
-         (re-search-forward "^\\* ")
-         (org-mode)                    ;Needed for `org-set-property'.
-         (org-set-property "seam-title-p" "t")))
-      (seam-export--replace-variable
-       "backlinks"
-       (seam-export--generate-backlinks note-file))
+      (insert
+       (mustache-render
+        seam-export--template
+        `(("title" .
+           ,(seam-export--escape-string
+             (seam-get-title-from-file note-file)))
+          ("modified" .
+           ,(format-time-string
+             seam-export-time-format
+             modified
+             seam-export-time-zone))
+          ("modified-dt" .
+           ,(format-time-string
+             seam-export-time-format-datetime
+             modified
+             seam-export-time-zone))
+          ("contents" .
+           ,(seam-export--to-string
+              (insert-file-contents note-file)
+              (re-search-forward "^\\* ")
+              (org-mode)               ;Needed for `org-set-property'.
+              (org-set-property "seam-title-p" "t")))
+          ("backlinks" .
+           ,(seam-export--generate-backlinks note-file)))))
       (write-file html-file))))
 
 (defun seam-export--file-string (file)
