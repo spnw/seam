@@ -213,7 +213,8 @@
       (buffer-name note)))))
 
 (ert-deftest seam-test-link-update ()
-  "Test that renaming a note updates its HTML and that of notes which link to it."
+  "Test that renaming a note updates its HTML and that of notes
+which link to it."
   (should
    (equal '(("qux.html")
             ("public/qux.org")
@@ -256,8 +257,8 @@ re-export note to which it links."
        (re-search-forward "<a href=\"/bar.html\">")))))
 
 (ert-deftest seam-test-link-no-extension ()
-  "Test that the :no-extension option causes links to render without .html
-extension."
+  "Test that the :no-extension option causes links to render without
+.html extension."
   (should
    (identity
     (seam-test-with-notes ((seam-export-alist
@@ -274,8 +275,8 @@ extension."
         (re-search-forward "<a href=\"/bar\">"))))))
 
 (ert-deftest seam-test-link-internal-class ()
-  "Test that setting `seam-export-internal-link-class' correctly renders
-the class."
+  "Test that setting `seam-export-internal-link-class' correctly
+renders the class."
   (should
    (identity
     (seam-test-with-notes ((seam-export-internal-link-class "internal"))
@@ -306,8 +307,8 @@ the class."
        (mapcar #'seam-test-strip-testdir (seam-get-links-to-file (buffer-file-name qux))))))))
 
 (ert-deftest seam-test-delete-note ()
-  "Test that deleting a note also deletes its HTML and re-exports linking
-notes such that they no longer link to it."
+  "Test that deleting a note also deletes its HTML and re-exports
+linking notes such that they no longer link to it."
   (should
    (equal
     '(nil ("html/foo.html" "public/foo.org"))
@@ -323,7 +324,8 @@ notes such that they no longer link to it."
        (seam-test-list-files))))))
 
 (ert-deftest seam-test-backlinks-public ()
-  "Test that linking to a note from a public note creates a backlink."
+  "Test that linking to a note from a public note creates a
+backlink."
   (should
    (identity
     (seam-test-with-notes ((seam-export-template-string "{{{backlinks}}}"))
@@ -382,8 +384,9 @@ backlink."
         (buffer-string))))))
 
 (ert-deftest seam-test-set-type-private ()
-  "Test that setting a public note to private will delete its HTML file and
-update linking HTML files such that they no longer link to it."
+  "Test that setting a public note to private will delete its HTML
+file and update linking HTML files such that they no longer link
+to it."
   (should
    (equal
     '(nil ("html/foo.html" "private/bar.org" "public/foo.org"))
@@ -489,7 +492,8 @@ it."
         (buffer-name))))))
 
 (ert-deftest seam-test-follow-link-new ()
-  "Test that following a link to an nonexistent note creates and opens that note."
+  "Test that following a link to an nonexistent note creates and
+opens that note."
   (should
    (equal
     '("bar" ("private/bar.org" "private/foo.org"))
@@ -534,7 +538,8 @@ and opens that note."
       (seam-export--file-string "html/quotes-symbols.html")))))
 
 (ert-deftest seam-test-custom-slug ()
-  "Test that setting the SEAM_SLUG property saves and exports accordingly."
+  "Test that setting the SEAM_SLUG property saves and exports
+accordingly."
   (should
    (equal
     '("html/c-vs-cpp.html" "public/c-vs-cpp.org")

@@ -344,7 +344,6 @@ INFO is a plist holding contextual information.  See
      ;; No path, only description.
      (t desc))))
 
-
 (defun seam-html-src-block (src-block _contents info)
   "Transcode a SRC-BLOCK element from Org to HTML.
 CONTENTS holds the contents of the item.  INFO is a plist holding
