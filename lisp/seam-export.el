@@ -209,7 +209,7 @@ notes)."
    :with-smart-quotes t
    :with-toc nil))
 
-(defmacro seam-export--to-string (&rest body)
+(defmacro seam-export--export-to-html-string (&rest body)
   (declare (indent 0))
   (let ((buf (gensym)))
     `(let ((,buf (generate-new-buffer " *seam-export*")))
@@ -223,7 +223,7 @@ notes)."
                     (buffer-string)))
          (kill-buffer ,buf)))))
 
-(defmacro seam-export--to-plain-string (&rest body)
+(defmacro seam-export--export-to-text-string (&rest body)
   (declare (indent 0))
   (let ((buf (gensym)))
     `(let ((,buf (generate-new-buffer " *seam-export*")))
@@ -238,22 +238,23 @@ notes)."
                     (buffer-string)))
          (kill-buffer ,buf)))))
 
-;;; Some HACK-ery to get fully escaped and smartquote-ized string.
-(defun seam-export--escape-string (s)
+(defun seam-export--org-to-html (s)
+  "Convert single-line Org string to HTML via Org exporter."
   (string-remove-prefix
    "<p>\n"
    (string-remove-suffix
     "</p>\n"
-    (seam-export--to-string
+    (seam-export--export-to-html-string
       (insert s)))))
 
-(defun seam-export--smartquotize-string (s)
+(defun seam-export--org-to-text (s)
+  "Convert single-line Org string to plain text via Org exporter."
   (string-chop-newline
-   (seam-export--to-plain-string
+   (seam-export--export-to-text-string
      (insert s))))
 
 (defun seam-export--generate-backlinks (file)
-  (seam-export--to-string
+  (seam-export--export-to-html-string
     (let ((files (cl-sort
                   (let ((seam--subset seam-export--types))
                     (cl-loop for x in (seam-get-links-to-file file)
@@ -275,10 +276,10 @@ notes)."
        (mustache-render
         seam-export--template
         `(("title" .
-           ,(seam-export--smartquotize-string
+           ,(seam-export--org-to-text
              (seam-get-title-from-file note-file)))
           ("raw-title" .
-           ,(seam-export--escape-string
+           ,(seam-export--org-to-html
              (seam-get-title-from-file note-file)))
           ("modified" .
            ,(format-time-string
@@ -291,7 +292,7 @@ notes)."
              modified
              seam-export-time-zone))
           ("contents" .
-           ,(seam-export--to-string
+           ,(seam-export--export-to-html-string
               (insert-file-contents note-file)
               (re-search-forward "^\\* ")
               (org-mode)               ;Needed for `org-set-property'.
