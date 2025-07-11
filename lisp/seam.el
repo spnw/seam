@@ -312,12 +312,13 @@ completion prompt is given to choose the type."
     seam-note-directory type
     (concat (when draft "-") slug ".org"))))
 
-(defun seam-get-links-to-file (file)
+(defun seam-get-links-to-file (file &optional include-drafts)
   "Return filename of each note which links to FILE."
   (cl-loop for file in (remove (expand-file-name file)
                                (seam-note-files-containing-string
                                 (format "[[seam:%s]" (file-name-base file))))
-           when (or seam-export--include-drafts
+           when (or include-drafts
+                    seam-export--include-drafts
                     (not (seam-draft-p file)))
            collect file))
 
@@ -619,7 +620,7 @@ buffer is killed after deletion."
    (let ((file (buffer-file-name)))
      (seam-get-note-type file)        ;Error if file isn't a Seam note.
      (list
-      (let ((incoming (length (seam-get-links-to-file file))))
+      (let ((incoming (length (seam-get-links-to-file file t))))
         (and (yes-or-no-p
               (format "Really %s `%s' and kill buffer%s?"
                       (if delete-by-moving-to-trash
