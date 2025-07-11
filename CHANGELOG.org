@@ -46,6 +46,12 @@
 - Notes are no longer re-exported unnecessarily whenever a linked note
   is changed.
 
+- In HTML templates, ={{title}}= now produces output with formatting
+  stripped out, so that it is more suitable for use in =<title>= tags.
+  To get a raw HTML-formatted title for =<h1>= tags and the like, you
+  should use the new ={{{raw-title}}}=.  As mentioned above, triple
+  brackets are the Mustache syntax for interpolating raw HTML.
+
 - When invoking =seam-delete-note=, the note's title is now mentioned.
   This is to reduce the risk of deleting the wrong note by mistake.
 

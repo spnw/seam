@@ -113,7 +113,7 @@ See `seam-export-alist' for more information about specifying templates."
 <body>
 <main>
 <header>
-<h1>{{title}}</h1>
+<h1>{{{raw-title}}}</h1>
 <p class=\"modified\">Last modified: <time datetime=\"{{modified-dt}}\">{{modified}}</time></p>
 </header>
 {{{contents}}}
@@ -137,7 +137,12 @@ interpolate it as-is.
 
   `title'
 
-   The note's title (HTML-escaped).
+   The note's title, in a plain text format suitable for a
+   <title> tag.
+
+  `raw-title'
+
+   The note's title, in an HTML format suitable for an <h1> tag.
 
   `backlinks'
 
@@ -271,6 +276,9 @@ notes)."
         seam-export--template
         `(("title" .
            ,(seam-export--smartquotize-string
+             (seam-get-title-from-file note-file)))
+          ("raw-title" .
+           ,(seam-export--escape-string
              (seam-get-title-from-file note-file)))
           ("modified" .
            ,(format-time-string
