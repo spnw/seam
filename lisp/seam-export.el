@@ -58,15 +58,17 @@ properties:
 
   `:template-file'
 
-   The HTML template file to be used by the exporter.  If this is
-   missing, falls back to :template-string, `seam-export-template-file',
-   or `seam-export-template-string' in that order.
+    The HTML template file to be used by the exporter.  If this
+    is missing, falls back to :template-string,
+    `seam-export-template-file', or `seam-export-template-string'
+    in that order.
 
   `:template-string'
 
-    The HTML template string to be used by the exporter.  If this is
-    missing, falls back to :template-file, `seam-export-template-file',
-    or `seam-export-template-string' in that order.
+    The HTML template string to be used by the exporter.  If this
+    is missing, falls back to :template-file,
+    `seam-export-template-file', or `seam-export-template-string'
+    in that order.
 
   `:template-values'
 
