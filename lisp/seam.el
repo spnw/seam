@@ -115,7 +115,7 @@ naming.  Must be a function taking two arguments: TITLE and TYPE."
   (org-mark-ring-push)
   (if-let ((file (seam-lookup-slug path)))
       (find-file file)
-    (seam-create-note path nil t))
+    (seam-create-note path nil t (seam-draft-p path)))
   (seam-set-buffer-name))
 
 (defvar seam-note-file-regexp "\\`[^.].+\\.org\\'")

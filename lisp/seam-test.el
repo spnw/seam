@@ -506,6 +506,25 @@ it."
              (seam-test-list-files))
           (kill-buffer)))))))
 
+(ert-deftest seam-test-follow-link-new-draft ()
+  "Test that following a link to an nonexistent draft note creates
+and opens that note."
+  (should
+   (equal
+    '("-bar" ("private/-bar.org" "private/foo.org"))
+    (seam-test-with-notes ()
+        ((foo "foo"))
+      (with-current-buffer foo
+        (seam-test-add-contents foo "[[seam:-bar]]")
+        (goto-char 1)
+        (org-next-link)
+        (org-open-at-point)
+        (unwind-protect
+            (list
+             (buffer-name)
+             (seam-test-list-files))
+          (kill-buffer)))))))
+
 (ert-deftest seam-test-escape-title ()
   (should
    (equal
