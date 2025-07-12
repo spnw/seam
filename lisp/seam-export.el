@@ -75,10 +75,9 @@ properties:
 
   `:template-values'
 
-    An alist of (VAR . VALUE) pairs, where VAR is a string naming
-    a template variable, and VALUE is the value to be used when
-    interpolating that variable.  See the mustache.el docs for
-    more information.  Defaults to nil.
+    An alist of template variables and their values.  Values
+    specified here will take precedence over those in
+    `seam-export-template-values'.  Defaults to nil.
 
   `:root-path'
 
