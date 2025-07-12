@@ -38,7 +38,7 @@
 (defvar seam-export--include-drafts nil)
 (defvar seam-export--no-extension nil)
 (defvar seam-export--time-format nil)
-(defvar seam-export--time-format-datetime nil)
+(defvar seam-export--time-format-dt nil)
 (defvar seam-export--time-zone nil)
 (defvar seam-export--internal-link-class nil)
 (defvar seam-export--options nil)
@@ -99,10 +99,10 @@ properties:
     Human-readable format for template time strings.  Defaults to
     the value of `seam-export-time-format'.
 
-  `:time-format-datetime'
+  `:time-format-dt'
 
     Machine-readable format for template time strings.  Defaults
-    to the value of `seam-export-time-format-datetime'.
+    to the value of `seam-export-time-format-dt'.
 
   `:time-zone'
 
@@ -184,7 +184,7 @@ interpolate it as-is.
   `modified-dt'
 
    The machine-readable date that the note was last modified. See
-   `seam-export-time-format-datetime'.")
+   `seam-export-time-format-dt'.")
 
 (defcustom seam-export-template-string seam-export-default-template-string
   "The HTML template string to be used by the exporter.  The template
@@ -208,7 +208,7 @@ information."
   :group 'seam-export
   :type 'string)
 
-(defcustom seam-export-time-format-datetime "%Y-%m-%d"
+(defcustom seam-export-time-format-dt "%Y-%m-%d"
   "Machine-readable format for template time strings.  Meant to be used in
 the datetime attribute of <time>.  Passed to `format-time-string'."
   :group 'seam-export
@@ -327,7 +327,7 @@ notes)."
               seam-export--time-zone))
            ("modified-dt" .
             ,(format-time-string
-              seam-export--time-format-datetime
+              seam-export--time-format-dt
               modified
               seam-export--time-zone))
            ("contents" .
@@ -377,9 +377,9 @@ notes)."
                          (seam-export--time-format
                           (or (plist-get plist :time-format)
                               seam-export-time-format))
-                         (seam-export--time-format-datetime
-                          (or (plist-get plist :time-format-datetime)
-                              seam-export-time-format-datetime))
+                         (seam-export--time-format-dt
+                          (or (plist-get plist :time-format-dt)
+                              seam-export-time-format-dt))
                          (seam-export--time-zone
                           (or (plist-get plist :time-zone)
                               seam-export-time-zone))

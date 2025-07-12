@@ -15,6 +15,11 @@
   instead of two: the third arg (=draft-p=) will be non-nil if the
   note is a draft.
 
+**** Renamed variables
+
+- =seam-export-time-format-datetime= is now
+  =seam-export-time-format-dt=.
+
 **** Renamed functions
 
 - =seam-make-note= is now =seam-create-note=.
