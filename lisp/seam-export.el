@@ -176,6 +176,16 @@ interpolate it as-is.
 
    A list (<ul>) of notes that link to the given note.
 
+  `created'
+
+   The human-readable date that the note was created.  See
+   `seam-export-time-format'.
+
+  `created-dt'
+
+   The machine-readable date that the note was created.  See
+   `seam-export-time-format-dt'.
+
   `modified'
 
    The human-readable date that the note was last modified.  See
@@ -183,8 +193,8 @@ interpolate it as-is.
 
   `modified-dt'
 
-   The machine-readable date that the note was last modified. See
-   `seam-export-time-format-dt'.")
+   The machine-readable date that the note was last modified.
+   See `seam-export-time-format-dt'.")
 
 (defcustom seam-export-template-string seam-export-default-template-string
   "The HTML template string to be used by the exporter.  The template
@@ -289,6 +299,14 @@ notes)."
    (seam-export--export-to-text-string
      (insert s))))
 
+(defun seam-export--get-props (file props)
+  (with-temp-buffer
+    (insert-file-contents file)
+    (when (re-search-forward "^\\* " nil t)
+      (org-mode)
+      (cl-loop for prop in props
+               collect (org-element-property prop (org-element-at-point))))))
+
 (defun seam-export--generate-backlinks (file)
   (seam-export--export-to-html-string
     (let ((files (cl-sort
@@ -303,43 +321,64 @@ notes)."
 
 (defun seam-export--note-to-html (note-file html-directory)
   (seam-ensure-directory-exists html-directory)
-  (let ((html-file (file-name-concat html-directory
-                                     (concat (seam-get-slug-from-file-name note-file) ".html")))
-        (modified (file-attribute-modification-time
-                   (file-attributes note-file))))
-    (with-temp-buffer
-      (insert
-       (mustache-render
-        seam-export--template
-        (append
-         seam-export--template-values
-         seam-export-template-values
-         `(("title" .
-            ,(seam-export--org-to-text
-              (seam-get-title-from-file note-file)))
-           ("raw-title" .
-            ,(seam-export--org-to-html
-              (seam-get-title-from-file note-file)))
-           ("modified" .
-            ,(format-time-string
-              seam-export--time-format
-              modified
-              seam-export--time-zone))
-           ("modified-dt" .
-            ,(format-time-string
-              seam-export--time-format-dt
-              modified
-              seam-export--time-zone))
-           ("contents" .
-            ,(seam-export--export-to-html-string
-               (insert-file-contents note-file)
-               (re-search-forward "^\\* ")
-               (org-mode)             ;Needed for `org-set-property'.
-               (org-set-property "seam-title-p" "t")))
-           ("backlinks" .
-            ,(seam-export--generate-backlinks note-file)))
-         nil)))
-      (write-file html-file))))
+  (cl-destructuring-bind (created-prop modified-prop)
+      (seam-export--get-props note-file '(:SEAM_CREATED :SEAM_MODIFIED))
+    (let* ((html-file (file-name-concat html-directory
+                                        (concat (seam-get-slug-from-file-name note-file) ".html")))
+           (modified
+            (or (ignore-errors (parse-iso8601-time-string modified-prop))
+                (file-attribute-modification-time
+                 (file-attributes note-file))))
+           (created
+            (or (ignore-errors (parse-iso8601-time-string created-prop))
+                modified)))
+      (with-temp-buffer
+        (insert
+         (mustache-render
+          seam-export--template
+          (append
+           seam-export--template-values
+           seam-export-template-values
+           `(("title" .
+              ,(seam-export--org-to-text
+                (seam-get-title-from-file note-file)))
+             ("raw-title" .
+              ,(seam-export--org-to-html
+                (seam-get-title-from-file note-file)))
+             ("created" .
+              ,(format-time-string
+                seam-export--time-format
+                created
+                seam-export--time-zone))
+             ("created-dt" .
+              ,(format-time-string
+                seam-export--time-format-dt
+                created
+                seam-export--time-zone))
+             ("modified" .
+              ,(format-time-string
+                seam-export--time-format
+                modified
+                seam-export--time-zone))
+             ("modified-dt" .
+              ,(format-time-string
+                seam-export--time-format-dt
+                modified
+                seam-export--time-zone))
+             ("modified?" .
+              ,(lambda (template context)
+                 (unless (equal created modified)
+                   (mustache-render template context))))
+             ("contents" .
+              ,(seam-export--export-to-html-string
+                 (insert-file-contents note-file)
+                 (re-search-forward "^\\* ")
+                 (org-mode)            ;Needed for `org-set-property'.
+                 (org-set-property "seam-title-p" "t")))
+             ("backlinks" .
+              ,(seam-export--generate-backlinks note-file)))
+           nil)))
+        (write-file html-file)))))
 
 (defun seam-export--file-string (file)
   (with-temp-buffer

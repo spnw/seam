@@ -44,6 +44,15 @@
   =seam-export-template-values=, or per profile with
   =:template-values=.
 
+- Added two new optional properties: =SEAM_CREATED= and
+  =SEAM_MODIFIED=.  These can be accessed within templates using
+  ={{created}}=, ={{created-dt}}=, ={{modified}}=, and
+  ={{modified-dt}}=.  If the new properties are not specified,
+  defaults will be pulled from filesystem metadata as before.  (There
+  is no reliable way to know a file's true creation date, so in the
+  absence of =SEAM_CREATED=, creation date is assumed to be the same
+  as modification.)
+
 - An option has been added to export internal links with a custom CSS
   class.  The default is set by =seam-export-internal-link-class=, and
   can overridden per profile using =:internal-link-class=.
