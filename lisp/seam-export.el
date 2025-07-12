@@ -37,6 +37,9 @@
 (defvar seam-export--root-path nil)
 (defvar seam-export--include-drafts nil)
 (defvar seam-export--no-extension nil)
+(defvar seam-export--time-format nil)
+(defvar seam-export--time-format-datetime nil)
+(defvar seam-export--time-zone nil)
 (defvar seam-export--internal-link-class nil)
 (defvar seam-export--options nil)
 
@@ -90,6 +93,21 @@ properties:
 
     Whether to drop the \".html\" file extension in links.  Defaults to
     nil.
+
+  `:time-format'
+
+    Human-readable format for template time strings.  Defaults to
+    the value of `seam-export-time-format'.
+
+  `:time-format-datetime'
+
+    Machine-readable format for template time strings.  Defaults
+    to the value of `seam-export-time-format-datetime'.
+
+  `:time-zone'
+
+    Time zone used for template time strings.  Defaults to the
+    value of `seam-export-time-zone'.
 
   `:internal-link-class'
 
@@ -304,14 +322,14 @@ notes)."
               (seam-get-title-from-file note-file)))
            ("modified" .
             ,(format-time-string
-              seam-export-time-format
+              seam-export--time-format
               modified
-              seam-export-time-zone))
+              seam-export--time-zone))
            ("modified-dt" .
             ,(format-time-string
-              seam-export-time-format-datetime
+              seam-export--time-format-datetime
               modified
-              seam-export-time-zone))
+              seam-export--time-zone))
            ("contents" .
             ,(seam-export--export-to-html-string
                (insert-file-contents note-file)
@@ -356,6 +374,15 @@ notes)."
                          (seam-export--no-extension (plist-get plist :no-extension))
                          (seam-export--template template)
                          (seam-export--template-values template-values)
+                         (seam-export--time-format
+                          (or (plist-get plist :time-format)
+                              seam-export-time-format))
+                         (seam-export--time-format-datetime
+                          (or (plist-get plist :time-format-datetime)
+                              seam-export-time-format-datetime))
+                         (seam-export--time-zone
+                          (or (plist-get plist :time-zone)
+                              seam-export-time-zone))
                          (seam-export--internal-link-class
                           (or (plist-get plist :internal-link-class)
                               seam-export-internal-link-class))
