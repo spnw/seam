@@ -254,8 +254,8 @@ notes)."
    :with-smart-quotes t
    :with-toc nil))
 
-(defmacro seam-export--export-to-html-string (&rest body)
-  (declare (indent 0))
+(cl-defmacro seam-export--export-to-string ((&key backend) &rest body)
+  (declare (indent 1))
   (let ((buf (gensym)))
     `(let ((,buf (generate-new-buffer " *seam-export*")))
        (unwind-protect
@@ -263,25 +263,15 @@ notes)."
                     ,@body
                     ;; This let prevents Org from popping up a window.
                     (let ((org-export-show-temporary-export-buffer nil))
-                      (org-export-to-buffer 'seam ,buf nil nil nil t seam-export--options nil)))
+                      (org-export-to-buffer ,backend ,buf nil nil nil t seam-export--options nil)))
                   (with-current-buffer ,buf
                     (buffer-string)))
          (kill-buffer ,buf)))))
 
-(defmacro seam-export--export-to-text-string (&rest body)
-  (declare (indent 0))
-  (let ((buf (gensym)))
-    `(let ((,buf (generate-new-buffer " *seam-export*")))
-       (unwind-protect
-           (progn (with-temp-buffer
-                    ,@body
-                    ;; This let prevents Org from popping up a window.
-                    (let ((org-export-show-temporary-export-buffer nil)
-                          (org-ascii-charset 'utf-8))
-                      (org-export-to-buffer 'ascii ,buf nil nil nil t seam-export--options nil)))
-                  (with-current-buffer ,buf
-                    (buffer-string)))
-         (kill-buffer ,buf)))))
+(defun seam-export--convert-string (backend s)
+  "Export Org string using the given Org exporter backend."
+  (seam-export--export-to-string (:backend backend)
+    (insert s)))
 
 (defun seam-export--org-to-html (s)
   "Convert single-line Org string to HTML via Org exporter."
@@ -289,14 +279,13 @@ notes)."
    "<p>\n"
    (string-remove-suffix
     "</p>\n"
-    (seam-export--export-to-html-string
-      (insert s)))))
+    (seam-export--convert-string 'seam s))))
 
 (defun seam-export--org-to-text (s)
   "Convert single-line Org string to plain text via Org exporter."
   (string-chop-newline
-   (seam-export--export-to-text-string
-     (insert s))))
+   (let ((org-ascii-charset 'utf-8))
+     (seam-export--convert-string 'ascii s))))
 
 (defun seam-export--get-props (file props)
   (with-temp-buffer
@@ -307,7 +296,7 @@ notes)."
                collect (org-element-property prop (org-element-at-point))))))
 
 (defun seam-export--generate-backlinks (file)
-  (seam-export--export-to-html-string
+  (seam-export--export-to-string (:backend 'seam)
     (let ((files (cl-sort
                   (let ((seam--subset seam-export--types))
                     (cl-loop for x in (seam-get-links-to-file file)
@@ -369,7 +358,7 @@ notes)."
                  (unless (equal created modified)
                    (mustache-render template context))))
              ("contents" .
-              ,(seam-export--export-to-html-string
+              ,(seam-export--export-to-string (:backend 'seam)
                  (insert-file-contents note-file)
                  (re-search-forward "^\\* ")
                  (org-mode)            ;Needed for `org-set-property'.
