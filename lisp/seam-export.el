@@ -29,6 +29,8 @@
 
 (require 'cl-lib)
 (require 'mustache)
+(require 'ox-ascii)
+(require 'ox-org)
 (require 'seam-html)
 
 (defvar seam-export--types nil)
