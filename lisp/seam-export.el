@@ -398,23 +398,27 @@ notes)."
                             (or (not (seam-draft-p file))
                                 (plist-get plist :include-drafts)))
                    (let ((seam-export--types types)
-                         (seam-export--root-path (or (plist-get plist :root-path) ""))
+                         (seam-export--root-path (cl-getf plist :root-path ""))
                          (seam-export--include-drafts (plist-get plist :include-drafts))
                          (seam-export--no-extension (plist-get plist :no-extension))
                          (seam-export--template template)
                          (seam-export--template-values template-values)
                          (seam-export--time-format
-                          (or (plist-get plist :time-format)
-                              seam-export-time-format))
+                          (cl-getf plist
+                                   :time-format
+                                   seam-export-time-format))
                          (seam-export--time-format-dt
-                          (or (plist-get plist :time-format-dt)
-                              seam-export-time-format-dt))
+                          (cl-getf plist
+                                   :time-format-dt
+                                   seam-export-time-format-dt))
                          (seam-export--time-zone
-                          (or (plist-get plist :time-zone)
-                              seam-export-time-zone))
+                          (cl-getf plist
+                                   :time-zone
+                                   seam-export-time-zone))
                          (seam-export--internal-link-class
-                          (or (plist-get plist :internal-link-class)
-                              seam-export-internal-link-class))
+                          (cl-getf plist
+                                   :internal-link-class
+                                   seam-export-internal-link-class))
                          (seam-export--options (org-combine-plists
                                                 seam-export-backend-options
                                                 (plist-get plist :backend-options))))

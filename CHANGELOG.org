@@ -100,3 +100,5 @@
   averting any mishaps if an invalid type is entered.
 
 - It is no longer possible to create a note with an empty slug.
+
+- Per-profile export options now override global options in all cases.
