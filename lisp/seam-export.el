@@ -31,6 +31,7 @@
 (require 'mustache)
 (require 'ox-ascii)
 (require 'ox-org)
+(require 'time-date)
 (require 'seam-html)
 
 (defvar seam-export--types nil)
@@ -42,6 +43,7 @@
 (defvar seam-export--time-format nil)
 (defvar seam-export--time-format-dt nil)
 (defvar seam-export--time-zone nil)
+(defvar seam-export--ignore-same-day-modifications nil)
 (defvar seam-export--internal-link-class nil)
 (defvar seam-export--options nil)
 
@@ -109,6 +111,12 @@ properties:
 
     Time zone used for template time strings.  Defaults to the
     value of `seam-export-time-zone'.
+
+  `:ignore-same-day-modifications'
+
+    Whether the `modified?' template variable should be false if
+    creation and modification date are on the same day.  Defaults
+    to the value of `seam-export-ignore-same-day-modifications'.
 
   `:internal-link-class'
 
@@ -231,6 +239,10 @@ the datetime attribute of <time>.  Passed to `format-time-string'."
   :group 'seam-export
   :type 'sexp)
 
+(defcustom seam-export-ignore-same-day-modifications t
+  "When non-nil, the `modified?' template variable will evaluate to
+false if creation and modification date are on the same day.")
+
 (defcustom seam-export-internal-link-class nil
   "CSS class name to use for internal links (i.e., links to other Seam
 notes)."
@@ -309,6 +321,20 @@ notes)."
         (cl-loop for (title . file) in files
                  do (insert (format "- [[seam:%s][%s]]\n" (file-name-base file) title)))))))
 
+;;; This was copied from time-date.el, with the addition of a ZONE
+;;; argument.
+(defun seam-export--time-to-days (time &optional zone)
+  "The absolute pseudo-Gregorian date for TIME, a time value.
+The absolute date is the number of days elapsed since the imaginary
+Gregorian date Sunday, December 31, 1 BC."
+  (let* ((tim (decode-time time zone))
+	       (year (decoded-time-year tim)))
+    (+ (time-date--day-in-year tim)     ;	Days this year
+       (* 365 (1- year))                ;	+ Days in prior years
+       (/ (1- year) 4)                  ;	+ Julian leap years
+       (- (/ (1- year) 100))            ;	- century years
+       (/ (1- year) 400))))
+
 (defun seam-export--note-to-html (note-file html-directory)
   (seam-ensure-directory-exists html-directory)
   (cl-destructuring-bind (created-prop modified-prop)
@@ -357,7 +383,16 @@ notes)."
                 seam-export--time-zone))
              ("modified?" .
               ,(lambda (template context)
-                 (unless (equal created modified)
+                 (unless (cond
+                          (seam-export--ignore-same-day-modifications
+                           (= (seam-export--time-to-days
+                               created
+                               seam-export--time-zone)
+                              (seam-export--time-to-days
+                               modified
+                               seam-export--time-zone)))
+                          (t
+                           (equal created modified)))
                    (mustache-render template context))))
              ("contents" .
               ,(seam-export--export-to-string (:backend 'seam)
@@ -415,6 +450,10 @@ notes)."
                           (cl-getf plist
                                    :time-zone
                                    seam-export-time-zone))
+                         (seam-export--ignore-same-day-modifications
+                          (cl-getf plist
+                                   :ignore-same-day-modifications
+                                   seam-export-ignore-same-day-modifications))
                          (seam-export--internal-link-class
                           (cl-getf plist
                                    :internal-link-class
