@@ -203,7 +203,12 @@ interpolate it as-is.
   `modified-dt'
 
    The machine-readable date that the note was last modified.
-   See `seam-export-time-format-dt'.")
+   See `seam-export-time-format-dt'.
+
+  `modified?'
+
+   When used as a block, this will render only when the creation
+   and modification dates are not the same.")
 
 (defcustom seam-export-template-string seam-export-default-template-string
   "The HTML template string to be used by the exporter.  The template
