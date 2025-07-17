@@ -181,6 +181,10 @@ interpolate it as-is.
 
    The note's title, in an HTML format suitable for an <h1> tag.
 
+  `slug'
+
+   The note's slug (that is, its filename without any extension).
+
   `backlinks'
 
    A list (<ul>) of notes that link to the given note.
@@ -366,6 +370,8 @@ Gregorian date Sunday, December 31, 1 BC."
              ("raw-title" .
               ,(seam-export--org-to-html
                 (seam-get-title-from-file note-file)))
+             ("slug" .
+              ,(seam-get-slug-from-file-name note-file))
              ("created" .
               ,(format-time-string
                 seam-export--time-format
