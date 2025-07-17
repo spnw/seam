@@ -45,7 +45,7 @@
 (defvar seam-export--time-zone nil)
 (defvar seam-export--ignore-same-day-modifications nil)
 (defvar seam-export--internal-link-class nil)
-(defvar seam-export--options nil)
+(defvar seam-export--backend-options nil)
 
 (defgroup seam-export nil
   "Options for Seam exporter."
@@ -286,7 +286,7 @@ notes)."
                     ,@body
                     ;; This let prevents Org from popping up a window.
                     (let ((org-export-show-temporary-export-buffer nil))
-                      (org-export-to-buffer ,backend ,buf nil nil nil t seam-export--options nil)))
+                      (org-export-to-buffer ,backend ,buf nil nil nil t seam-export--backend-options nil)))
                   (with-current-buffer ,buf
                     (buffer-string)))
          (kill-buffer ,buf)))))
@@ -469,9 +469,10 @@ Gregorian date Sunday, December 31, 1 BC."
                           (cl-getf plist
                                    :internal-link-class
                                    seam-export-internal-link-class))
-                         (seam-export--options (org-combine-plists
-                                                seam-export-backend-options
-                                                (plist-get plist :backend-options))))
+                         (seam-export--backend-options
+                          (org-combine-plists
+                           seam-export-backend-options
+                           (plist-get plist :backend-options))))
                      (seam-export--note-to-html file dir))))))))
 
 (defun seam-export-all-notes ()
